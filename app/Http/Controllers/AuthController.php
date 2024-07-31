@@ -103,11 +103,12 @@ class AuthController extends Controller
     }
     public function logout(Request $request)
     {
+        dd(767676);
         try {
             // Parse the token
             $token = JWTAuth::getToken();
             $user = JWTAuth::authenticate($token);
-            
+
             // Check your specific condition here
             // For example, checking if the user is active or some other condition
             if ($user->some_condition) {
