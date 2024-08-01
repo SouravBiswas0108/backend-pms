@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('user_details', function (Blueprint $table) {
+        Schema::create('user_details', function (Blueprint $table) {
             // Add new columns
             $table->id();
-            $table->unsignedBigInteger('user_id'); // Make sure to define the column for the foreign key
+            $table->string('staff_id',20); // Make sure to define the column for the foreign key
             $table->string('gender', 255)->nullable();
             $table->string('designation', 255)->nullable();
             $table->string('cadre', 255)->nullable();
@@ -33,16 +33,16 @@ return new class extends Migration
             $table->string('recovery_email', 255)->nullable();
             $table->string('messenger_color', 255)->default('#2180f3');
             $table->tinyInteger('dark_mode')->default(0);
-            
+            $table->timestamps();
+
             // Adding foreign key column
             // Adding foreign key constraint
-            $table->foreign('user_id')
-                  ->references('id')
+            $table->foreign('staff_id')
+                  ->references('staff_id')
                   ->on('users')
                   ->onDelete('cascade'); // This will ensure that if a user is deleted, related user_details are also deleted
 
-            $table->dropColumn('column_name');
-            $table->timestamps();
+
         });
     }
 
@@ -53,10 +53,10 @@ return new class extends Migration
     {
         Schema::table('user_details', function (Blueprint $table) {
             // Drop foreign key constraint
-            $table->dropForeign(['user_id']);
+            $table->dropForeign(['staff_id']);
 
             // Drop the foreign key column
-            $table->dropColumn('user_id');
+            $table->dropColumn('staff_id');
 
             // If needed, you can also add code to reverse other changes made in the up method
         });

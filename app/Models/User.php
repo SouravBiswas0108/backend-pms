@@ -62,6 +62,15 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
+    public function userDetail()
+    {
+        return $this->hasOne(UserDetail::class);
+    }
+
+    public function departMentStaff()
+    {
+        return $this->hasOne(DepartmentAssignStaff::class);
+    }
 }
 
 // namespace App\Models;
