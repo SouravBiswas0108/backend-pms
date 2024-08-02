@@ -20,13 +20,16 @@ return new class extends Migration
             $table->double('target')->nullable();
             $table->text('kpi')->nullable();
             $table->text('unit')->nullable();
-            $table->tinyInteger('quater')->nullable();
+            $table->tinyInteger('quater');
             $table->text('aggregate')->nullable();
             $table->double('quarter_marks')->default('0');
-            $table->double('target_achieved', 500)->default(0);
-            $table->double('raw', 500)->default(0);
-            $table->string('weighted', 500)->nullable();
+            $table->double('target_achieved')->default(0);
+            $table->double('raw')->default(0);
+            $table->double('weighted')->default(0);
             $table->timestamps();
+
+             // Define the foreign key constraint
+             $table->foreign('employee_tasks_id')->references('id')->on('employee_tasks')->onDelete('cascade');
         });
     }
 

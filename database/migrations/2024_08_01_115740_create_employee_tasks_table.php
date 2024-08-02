@@ -34,7 +34,9 @@ return new class extends Migration
 
              // Define the foreign key constraint
              $table->foreign('kra_id')->references('id')->on('kras')->onDelete('cascade');
-        });
+             $table->foreign('dept_id')->references('department_id')->on('departments')->onDelete('cascade');
+             $table->foreign('staff_id')->references('staff_id')->on('users')->onDelete('cascade');
+            });
     }
 
     /**
