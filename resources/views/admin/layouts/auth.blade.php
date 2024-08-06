@@ -10,16 +10,16 @@
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title> @yield('title') &dash; {{"hello"}}</title>
+    <title> @yield('title') &dash; {{$settings["header_text"]}}</title>
 
     <!-- Favicon -->
     <!-- <link rel="icon" href="{{asset(Storage::url('logo/favicon.png'))}}" type="image"> -->
-    <link rel="icon" href="{{ asset('/storage/logo/favicon.png')}}" type="image">
+    <link rel="icon" href="{{ asset('/storage/logo/favicon.png')}}" type="image">    
     <!-- CSS Libraries -->
     <link rel="stylesheet" href="{{ asset('/assets/libs/@fortawesome/fontawesome-free/css/all.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('/public/assets/css/site.css') }}">
-    <link rel="stylesheet" href="{{ asset('/public/assets/css/ac.css') }}">
-    <link rel="stylesheet" href="{{ asset('/public/assets/css/stylesheet.css') }}">
+    <link rel="stylesheet" href="{{ asset('/assets/css/site.css') }}">
+    <link rel="stylesheet" href="{{ asset('/assets/css/ac.css') }}">
+    <link rel="stylesheet" href="{{ asset('/assets/css/stylesheet.css') }}">
     @if($SITE_RTL=='on')
         <link rel="stylesheet" href="{{ asset('/css/bootstrap-rtl.css') }}">
     @endif
@@ -36,7 +36,7 @@
         </a>
         @yield('content')
         <h5 class="copyright-text">
-            {{"footer"}}
+            {{ $settings["footer_text"]}}
         </h5>
         @yield('language-bar')
     </div>

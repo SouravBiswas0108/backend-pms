@@ -18,7 +18,7 @@ return new class extends Migration
             // $table->longText('staff_list')->nullable();
             // $table->text('assignRoleDetails')->nullable();
             $table->string('org_code', 20)->nullable();
-            $table->integer('created_by', 20)->default(1);
+            $table->integer('created_by')->default(1);
             // $table->year('year');
             $table->timestamps();
         });

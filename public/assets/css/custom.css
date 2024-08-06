@@ -1,0 +1,248 @@
+.board {
+    display: block;
+    white-space: nowrap;
+    overflow-x: auto;
+}
+
+.page-content {
+    min-height: 800px;
+}
+
+.tasks {
+    display: inline-block;
+    width: 19rem;
+    padding: 0 .5rem 0 .5rem;
+    border: 1px solid #ebecf099;
+    vertical-align: top;
+    border-radius: 20px;
+    background: #ebecf099;
+}
+
+.tasks.tasks:not(:last-child) {
+    margin-right: .35rem;
+}
+
+.tasks .task-header {
+    flex: 0 0 auto;
+    padding: 12px 8px;
+    position: relative;
+    overflow: hidden;
+    overflow-wrap: break-word;
+    font-weight: bolder;
+    color: #34395e;
+    font-size: 13px;
+}
+
+.task-list-items {
+    min-height: 120px;
+    position: relative;
+    box-shadow: 0 0 49px rgba(105, 105, 105, 0.09);
+    border-radius: 10px;
+}
+
+.task-list-items:before {
+    content: "No Deals";
+    position: absolute;
+    line-height: 110px;
+    width: 100%;
+    text-align: center;
+    font-weight: 600;
+}
+
+.task-list-items h6 .badge {
+    font-size: 5px !important;
+    padding: 0px 8px !important;
+}
+
+.for-leads:before {
+    content: "No Leads";
+}
+
+.tasks .card {
+    white-space: normal;
+    margin-top: 1rem;
+    border-radius: 10px !important;
+}
+
+.tasks .card .text-body {
+    font-size: 14px;
+}
+
+.gu-mirror {
+    position: fixed !important;
+    margin: 0 !important;
+    z-index: 9999 !important;
+    opacity: .8
+}
+
+.gu-mirror .text-body {
+    font-size: 14px !important;
+}
+
+.gu-mirror .badge {
+    font-size: 5px !important;
+    padding: 0px 8px !important;
+}
+
+.gu-hide {
+    display: none !important
+}
+
+.gu-unselectable {
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    user-select: none !important
+}
+
+.gu-transit {
+    opacity: .2;
+}
+
+.action-item:focus {
+    outline: none;
+}
+
+.dragula-handle {
+    position: relative;
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+    text-align: center;
+    cursor: move
+}
+
+.dz-message {
+    border: none !important;
+}
+
+.dropzone .dz-preview .dz-image img {
+    width: 100% !important;
+}
+
+.dropzone.dz-clickable {
+    background: #fff !important;
+}
+
+.dropzone .dz-preview {
+    margin: 10px !important;
+    padding: 10px !important;
+    width: 120px !important;
+}
+
+.dropzone .dz-preview .dz-image {
+    width: 100px !important;
+    height: 100px !important;
+}
+
+.dz-filename {
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+.dropzone {
+    display: block !important;
+}
+
+.strike {
+    text-decoration: line-through;
+}
+
+.dropdown-toggle::after {
+    content: none;
+}
+
+body.sidebar-mini .main-footer {
+    position: fixed;
+    bottom: 0;
+}
+
+.deal_title:hover .deal_icon {
+    display: inline-block;
+}
+
+.deal_icon {
+    display: none;
+}
+
+.deal_status {
+    float: right;
+    position: absolute;
+    right: 0;
+}
+
+.deal_status a:hover {
+    text-decoration: none;
+}
+
+.due_amount tr {
+    border-bottom: 1px solid #f7f8f9;
+}
+
+.due_amount tr:last-child {
+    border-bottom: none;
+}
+
+.h-1050 {
+    /*height: 1050px !important;*/
+    height: 990px !important;
+}
+
+.beep:after {
+    content: '';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 6px;
+    height: 6px;
+    background-color: #ffa426;
+    border-radius: 50%;
+    animation: pulsate 1s ease-out;
+    animation-iteration-count: infinite;
+    opacity: 1;
+}
+
+@-webkit-keyframes pulsate {
+    0% {
+        -webkit-transform: scale(0.1, 0.1);
+        opacity: 0.0;
+    }
+    50% {
+        opacity: 1.0;
+    }
+    100% {
+        -webkit-transform: scale(1.2, 1.2);
+        opacity: 0.0;
+    }
+}
+
+.max-380 {
+    max-height: 380px;
+    min-height: 380px;
+    overflow-y: auto;
+}
+
+.setting-img {
+    height: 68px !important;
+    width: auto !important;
+    filter: drop-shadow(1px 1px 2px #222);
+}
+.for-leads:before {
+    content: "No Leads";
+    margin-left: -15px;
+}
+
+.for-deals:before {
+    content: "No Deals";
+    margin-left: -15px;
+}
+.custom_messanger_counter{
+    position: absolute;
+    top: 10px;
+    min-width: 1rem;
+    min-height: 1rem;
+}
+.message-counter svg
+{
+    margin-right: unset;
+}

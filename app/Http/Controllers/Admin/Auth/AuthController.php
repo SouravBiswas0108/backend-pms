@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Utility;
 use Illuminate\Http\Request;
 
 class AuthController extends Controller
@@ -10,10 +11,12 @@ class AuthController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function login()
     {
         // dd(123);
-        return view('admin.auth.login');
+        $settings = Utility::settings();
+        // dd($settings);
+        return view('admin.auth.login',compact('settings'));
     }
 
     /**

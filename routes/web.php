@@ -20,6 +20,6 @@ Route::get('/', function () {
 
 Route::prefix('admin')->name('admin.')->group(function() {
     // Login Routes
-    Route::get('login', [AuthController::class, 'index'])->name('login');
+    Route::get('login', [AuthController::class, 'login'])->name('login');
     Route::post('login', [AuthController::class, 'login']);
 });
