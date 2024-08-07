@@ -55,5 +55,10 @@
             </div>
             <button type="submit" class="btn-login" tabindex="4">{{ __('Login') }}</button>
         </form>
+        </form>
+        </form>
+        </form>
+        </form>
+      </form>
     </div>
 @endsection
