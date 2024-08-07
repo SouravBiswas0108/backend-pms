@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Admin\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Models\Utility;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -16,16 +19,38 @@ class AuthController extends Controller
         // dd(123);
         $settings = Utility::settings();
         // dd($settings);
-        return view('admin.auth.login',compact('settings'));
+        return view('admin.auth.login', compact('settings'));
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function loginSubmit(Request $request)
     {
-        //
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string|min:6',
+        ]);
+        // return Hash::make($request->password);
+        $credentials = $request->only('email', 'password');
+
+        if (Auth::attempt($credentials)) {
+            // Authentication was successful...
+            $user = Auth::user();
+
+            // Optionally, you can update the password if it hasn't been hashed yet
+            // (though this should ideally be done during registration, not login)
+            // $user->password = Hash::make($request->password);
+            // $user->save();
+            // dd(session()->user());
+
+            return response()->json(['message' => 'Login successful'], 200);
+        } else {
+            // Authentication failed...
+            return response()->json(['message' => 'Invalid credentials'], 401);
+        }
     }
+
 
     /**
      * Store a newly created resource in storage.

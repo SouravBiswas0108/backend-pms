@@ -19,14 +19,14 @@ class Utility extends Model
     {
         $data = DB::table('settings');
 
-        if(Auth::check())
-        {
-            $data->where('created_by', '=', Auth::user()->ownerId())->orWhere('created_by', '=', 1);
-        }
-        else
-        {
-            $data->where('created_by', '=', 1);
-        }
+        // if(Auth::check())
+        // {
+        //     $data->where('created_by', '=', Auth::user()->ownerId())->orWhere('created_by', '=', 1);
+        // }
+        // else
+        // {
+        //     $data->where('created_by', '=', 1);
+        // }
 
         $data = $data->get();
 

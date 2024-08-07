@@ -21,7 +21,7 @@
 @section('content')
     <div class="login-form">
         <div class="page-title"><h5>{{__('Login')}}</h5></div>
-        <form method="POST" action="{{ route('login') }}" class="needs-validation" novalidate="">
+        <form method="POST" action="{{ route('admin.loginsubmit') }}" class="needs-validation" novalidate="">
             @csrf
             @if (session('error'))
             <div class="alert alert-danger">

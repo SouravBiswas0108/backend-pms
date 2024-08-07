@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Utility;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -12,7 +13,8 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
+        $settings = Utility::settings();
+        return view('admin.users.index', compact('settings'));
     }
 
     /**
@@ -20,7 +22,15 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        // dd(522);
+      
+            // print_r($organization);die('++++');
+            return view('admin.users.create_owner');
+        
+        // else
+        // {
+        //     return response()->json(['error' => __('Permission Denied.')], 401);
+        // }
     }
 
     /**

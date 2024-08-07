@@ -1,4 +1,4 @@
-@php
+{{-- @php
     $logo=asset(Storage::url('logo/'));
     $favicon=Utility::getValByName('company_favicon');
     $SITE_RTL = env('SITE_RTL');
@@ -6,40 +6,38 @@
         $SITE_RTL = 'off';
     }
 
-@endphp
+@endphp --}}
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{$SITE_RTL == 'on'?'rtl':''}}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="">
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title> @yield('title') &dash; {{(Utility::getValByName('header_text')) ? Utility::getValByName('header_text') : config('app.name', 'LeadGo')}}</title>
+    <title> @yield('title') &dash; admin</title>
 
-    <!-- <link rel="icon" href="{{$logo.'/'.(isset($favicon) && !empty($favicon)?$favicon:'favicon.png')}}" type="image"> -->
-    <link rel="icon" href="{{ asset('/public/storage/logo/favicon.png')}}" type="image">
+    
+     
 
     @stack('head')
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css">
-    <link rel="stylesheet" href="{{ asset('/public/assets/libs/bootstrap-daterangepicker/daterangepicker.css') }}">
+    <link rel="stylesheet" href="{{ asset('/assets/libs/bootstrap-daterangepicker/daterangepicker.css') }}">
 
-    <link rel="stylesheet" href="{{ asset('/public/assets/libs/@fortawesome/fontawesome-free/css/all.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('/public/assets/libs/animate.css/animate.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('/assets/libs/@fortawesome/fontawesome-free/css/all.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('/assets/libs/animate.css/animate.min.css') }}">
 
-    <link rel="stylesheet" href="{{ asset('/public/assets/css/site.css') }}">
-    <link rel="stylesheet" href="{{ asset('/public/assets/css/ac.css') }}">
-    <link rel="stylesheet" href="{{ asset('/public/assets/css/datatables.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('/public/assets/css/stylesheet.css') }}">
-    <link rel="stylesheet" href="{{ asset('/public/assets/css/custom.css') }}">
-    <link rel="stylesheet" href="{{ asset('/public/assets/libs/select2/dist/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('/assets/css/site.css') }}">
+    <link rel="stylesheet" href="{{ asset('/assets/css/ac.css') }}">
+    <link rel="stylesheet" href="{{ asset('/assets/css/datatables.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('/assets/css/stylesheet.css') }}">
+    <link rel="stylesheet" href="{{ asset('/assets/css/custom.css') }}">
+    <link rel="stylesheet" href="{{ asset('/assets/libs/select2/dist/css/select2.min.css') }}">
 
-    @if($SITE_RTL=='on')
-        <link rel="stylesheet" href="{{ asset('/public/css/bootstrap-rtl.css') }}">
-    @endif
+    
     <meta name="url" content="{{ url('').'/'.config('chatify.routes.prefix') }}" data-user="{{ Auth::user()->id }}">
 
     {{-- scripts --}}
-    <script src="{{ asset('/public/js/chatify/autosize.js') }}"></script>
+    <script src="{{ asset('/js/chatify/autosize.js') }}"></script>
     <script src='https://unpkg.com/nprogress@0.2.0/nprogress.js'></script>
     {{-- styles --}}
     <link rel='stylesheet' href='https://unpkg.com/nprogress@0.2.0/nprogress.css'/>
@@ -48,9 +46,9 @@
 <body class="application application-offset">
 
 <div class="container-fluid container-application">
-    @include('partials.admin.navbar')
+    @include('admin.partials.admin.navbar')
     <div class="main-content position-relative">
-        @include('partials.admin.topbar')
+        @include('admin.partials.admin.topbar')
         <div class="page-content">
             <div class="page-title">
                 <div class="row justify-content-between align-items-center">
@@ -66,7 +64,7 @@
             </div>
             @yield('content')
         </div>
-        @include('partials.admin.footer')
+        @include('admin.partials.admin.footer')
     </div>
 </div>
 
@@ -113,21 +111,21 @@
 </div>
 
 <!-- General JS Scripts -->
-<script src="{{asset('/public/assets/js/jquery.min.js')}}"></script>
-<script src="{{ asset('/public/assets/js/site.core.js') }}"></script>
-<script src="{{ asset('/public/assets/libs/progressbar.js/dist/progressbar.min.js') }}"></script>
-<script src="{{ asset('/public/assets/libs/apexcharts/dist/apexcharts.min.js') }}"></script>
-<script src="{{ asset('/public/assets/libs/moment/min/moment.min.js') }}"></script>
-<script src="{{ asset('/public/assets/js/site.js') }}"></script>
-<script src="{{ asset('/public/assets/js/datatables.min.js') }}"></script>
-<script src="{{ asset('/public/assets/libs/bootstrap-daterangepicker/daterangepicker.js') }}"></script>
-<script src="{{ asset('/public/assets/libs/bootstrap-notify/bootstrap-notify.min.js') }}"></script>
-<script src="{{ asset('/public/assets/libs/select2/dist/js/select2.min.js') }}"></script>
-<script src="{{asset('/public/assets/libs/nicescroll/jquery.nicescroll.min.js')}}"></script>
-<script src="{{ asset('/public/assets/js/jquery.form.js')}}"></script>
+<script src="{{asset('/assets/js/jquery.min.js')}}"></script>
+<script src="{{ asset('/assets/js/site.core.js') }}"></script>
+<script src="{{ asset('/assets/libs/progressbar.js/dist/progressbar.min.js') }}"></script>
+<script src="{{ asset('/assets/libs/apexcharts/dist/apexcharts.min.js') }}"></script>
+<script src="{{ asset('/assets/libs/moment/min/moment.min.js') }}"></script>
+<script src="{{ asset('/assets/js/site.js') }}"></script>
+<script src="{{ asset('/assets/js/datatables.min.js') }}"></script>
+<script src="{{ asset('/assets/libs/bootstrap-daterangepicker/daterangepicker.js') }}"></script>
+<script src="{{ asset('/assets/libs/bootstrap-notify/bootstrap-notify.min.js') }}"></script>
+<script src="{{ asset('/assets/libs/select2/dist/js/select2.min.js') }}"></script>
+<script src="{{asset('/assets/libs/nicescroll/jquery.nicescroll.min.js')}}"></script>
+<script src="{{ asset('/assets/js/jquery.form.js')}}"></script>
 
 
-<script type="text/javascript" src="{{asset('/public/assets/js/tinymce/js/tinymce/tinymce.min.js')}}"></script>
+<script type="text/javascript" src="{{asset('/assets/js/tinymce/js/tinymce/tinymce.min.js')}}"></script>
 <script type="text/javascript">
     var useDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
     tinymce.init({
@@ -147,40 +145,7 @@
 
 
 
-@include('Chatify::layouts.footerLinks')
-@if(Utility::getValByName('gdpr_cookie') == 'on')
-    <script type="text/javascript">
 
-        var defaults = {
-            'messageLocales': {
-                /*'en': 'We use cookies to make sure you can have the best experience on our website. If you continue to use this site we assume that you will be happy with it.'*/
-                'en': "{{Utility::getValByName('cookie_text')}}"
-            },
-            'buttonLocales': {
-                'en': 'Ok'
-            },
-            'cookieNoticePosition': 'bottom',
-            'learnMoreLinkEnabled': false,
-            'learnMoreLinkHref': '/cookie-banner-information.html',
-            'learnMoreLinkText': {
-                'it': 'Saperne di più',
-                'en': 'Learn more',
-                'de': 'Mehr erfahren',
-                'fr': 'En savoir plus'
-            },
-            'buttonLocales': {
-                'en': 'Ok'
-            },
-            'expiresIn': 30,
-            'buttonBgColor': '#d35400',
-            'buttonTextColor': '#fff',
-            'noticeBgColor': '#051c4b',
-            'noticeTextColor': '#fff',
-            'linkColor': '#009fdd'
-        };
-    </script>
-    <script src="{{ asset('/assets/js/cookie.notice.js')}}"></script>
-@endif
 
 {{-- Pusher JS--}}
 @if(\Auth::user()->type != 'Super Admin')
@@ -231,7 +196,7 @@
         // Mark As Read Notification
         $(document).on("click", ".mark_all_as_read", function () {
             $.ajax({
-                url: '{{route('notification.seen',\Auth::user()->id)}}',
+                url: '{{route('admin.dashboard')}}',
                 type: "get",
                 cache: false,
                 success: function (data) {
@@ -242,35 +207,9 @@
             })
         });
 
-        // Get chat for top ox
-        // function getChat() {
-        //     $.ajax({
-        //         url: '{{route('message.data')}}',
-        //         type: "get",
-        //         cache: false,
-        //         success: function (data) {
-        //             if (data.length != 0) {
-        //                 $(".message-toggle-msg").addClass('beep');
-        //                 $(".dropdown-list-message-msg").html(data);
-        //             }
-        //         }
-        //     })
-        // }
+        
 
-        // getChat();
-
-        $(document).on("click", ".mark_all_as_read_message", function () {
-            $.ajax({
-                url: '{{route('message.seen')}}',
-                type: "get",
-                cache: false,
-                success: function (data) {
-                    $('.dropdown-list-message-msg').html('');
-                    $(".message-toggle-msg").removeClass('beep');
-                }
-            })
-        });
-
+       
         var date_picker_locale = {
             format: 'YYYY-MM-DD',
             daysOfWeek: [
@@ -303,10 +242,8 @@
 @endif
 
 
-<script>
-    var toster_pos="{{$SITE_RTL =='on' ?'left' : 'right'}}";
-</script>
-<script src="{{ asset('/public/assets/js/new-custom.js')}}"></script>
+
+<script src="{{ asset('/assets/js/new-custom.js')}}"></script>
 
 @if ($message = Session::get('success'))
     <script>show_toastr('Success', '{!! $message !!}', 'success')</script>
@@ -555,20 +492,7 @@
     // Common main search
     var currentRequest = null;
 
-    function search_data(keyword = '') {
-        currentRequest = $.ajax({
-            url: '{{ route('search.json') }}',
-            data: {keyword: keyword},
-            beforeSend: function () {
-                if (currentRequest != null) {
-                    currentRequest.abort();
-                }
-            },
-            success: function (data) {
-                $('.search-output').html(data);
-            }
-        });
-    }
+   
     @endif
 </script>
 <script>
