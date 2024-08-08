@@ -9,27 +9,22 @@ class UserDetail extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'user_id',
-        'gender',
-        'designation',
-        'cadre',
-        'grade_level',
-        'org_code',
-        'org_name',
-        'date_of_current_posting',
-        'date_of_MDA_posting',
-        'date_of_last_promotion',
-        'type',
-        'lang',
-        'job_title',
-        'default_pipeline',
-        'created_by',
-        'is_active',
-        'recovery_email',
-        'messenger_color',
-        'dark_mode'
-    ];
+    
+        protected $fillable = [
+            'staff_id',
+            'gender',
+            'designation',
+            'cadre',
+            'org_code',
+            'org_name',
+            'date_of_current_posting',
+            'date_of_MDA_posting',
+            'date_of_last_promotion',
+            'job_title',
+            'grade_level',
+            'recovery_email',
+        ];
+   
 
     public function user()
     {

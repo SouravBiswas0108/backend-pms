@@ -29,6 +29,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware(['CheckAuth'])->group(function () {
         Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::get('users', [UserController::class, 'index'])->name('users');
-        Route::get('/users/create', [UserController::class,'create'])->name('usersCreate');
+        Route::post('/users/create', [UserController::class,'create'])->name('userscreate');
     });
 });

@@ -1,13 +1,13 @@
 <?php
 
-
 namespace App\Models;
+
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
-// use Tymon\JWTAuth\Contracts\JWTSubject;
+
 class User extends Authenticatable implements JWTSubject
 {
     use HasFactory, Notifiable;
@@ -18,9 +18,23 @@ class User extends Authenticatable implements JWTSubject
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'ippis_no',
+        'staff_id',
+        'F_name',
+        'M_name',
+        'L_name',
         'email',
+        'phone',
         'password',
+        'designation',
+        'cadre',
+        'organization',
+        'role',
+        'date_of_current_posting',
+        'date_of_MDA_posting',
+        'date_of_last_promotion',
+        'gender',
+        'grade_level'
     ];
 
     /**
@@ -40,9 +54,12 @@ class User extends Authenticatable implements JWTSubject
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'date_of_current_posting' => 'datetime',
+        'date_of_MDA_posting' => 'datetime',
+        'date_of_last_promotion' => 'datetime',
     ];
 
-     /**
+    /**
      * Get the identifier that will be stored in the subject claim of the JWT.
      *
      * @return mixed
@@ -62,16 +79,11 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
-    public function userDetail()
-    {
-        return $this->hasOne(UserDetail::class);
-    }
-
-    public function departMentStaff()
-    {
-        return $this->hasOne(DepartmentAssignStaff::class);
-    }
+    // Additional relationships or methods can go here
 }
+
+
+//second model
 
 // namespace App\Models;
 
@@ -100,7 +112,7 @@ class User extends Authenticatable implements JWTSubject
 //      * The attributes that should be hidden for serialization.
 //      *
 //      * @var array<int, string>
-//      */
+//      
 //     protected $hidden = [
 //         'password',
 //         'remember_token',
