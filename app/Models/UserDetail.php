@@ -23,6 +23,8 @@ class UserDetail extends Model
             'job_title',
             'grade_level',
             'recovery_email',
+            'created_by',
+            'type',
         ];
    
 

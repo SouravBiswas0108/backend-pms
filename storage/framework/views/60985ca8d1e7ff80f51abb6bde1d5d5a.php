@@ -46,7 +46,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="card bg-none card-box">
-                        <form class="pl-3 pr-3" id="create_user_form" method="POST" action="<?php echo e(route('admin.userscreate')); ?>" >
+                        <form class="pl-3 pr-3" id="create_user_form" method="POST" action="<?php echo e(route('admin.users.store')); ?>" >
                             <?php echo csrf_field(); ?>
                             <div class="row">
                                 <div class="col-6 form-group">
@@ -247,6 +247,7 @@
                                 </tr>
                             </thead>
                             <!-- Table body here -->
+                            
                         </table>
                     </div>
                 </div>
@@ -254,5 +255,8 @@
         </div>
     </div>
 <?php $__env->stopSection(); ?>
+
+
+
 
 <?php echo $__env->make('admin.layouts.admin', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\laragon\www\backend-pms\resources\views/admin/users/index.blade.php ENDPATH**/ ?>

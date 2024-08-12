@@ -29,11 +29,11 @@ class AuthController extends Controller
     {
         $request->validate([
             'email' => 'required|email',
-            'password' => 'required|string|min:6',
+            'password' => 'required|string|min:4',
         ]);
         // return Hash::make($request->password);
         $credentials = $request->only('email', 'password');
-
+// dd();
         if (Auth::attempt($credentials)) {
             // Authentication was successful...
             $user = Auth::user();
@@ -43,8 +43,10 @@ class AuthController extends Controller
             // $user->password = Hash::make($request->password);
             // $user->save();
             // dd(session()->user());
+        return redirect()->route('admin.users');
+            // return redirect->route('users');
 
-            return response()->json(['message' => 'Login successful'], 200);
+            // return response()->json(['message' => 'Login successful'], 200);
         } else {
             // Authentication failed...
             return response()->json(['message' => 'Invalid credentials'], 401);

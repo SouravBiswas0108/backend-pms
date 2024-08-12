@@ -43,7 +43,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="card bg-none card-box">
-                        <form class="pl-3 pr-3" id="create_user_form" method="POST" action="{{ route('admin.userscreate') }}" >
+                        <form class="pl-3 pr-3" id="create_user_form" method="POST" action="{{ route('admin.users.store') }}" >
                             @csrf
                             <div class="row">
                                 <div class="col-6 form-group">
@@ -244,6 +244,7 @@
                                 </tr>
                             </thead>
                             <!-- Table body here -->
+                            
                         </table>
                     </div>
                 </div>
@@ -251,3 +252,6 @@
         </div>
     </div>
 @endsection
+
+
+

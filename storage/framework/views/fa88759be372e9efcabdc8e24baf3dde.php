@@ -512,8 +512,8 @@
         "serverSide": true,
 
         "ajax": {
-            "url": base_url + '/user-list',
-            "type": "POST",
+            "url": base_url + '/users',
+            "type": "GET",
             "dataType": 'JSON',
             data: function(d) {
                 
@@ -549,6 +549,8 @@
     }
 });
 </script>
+
+
 
 </body>
 </html>

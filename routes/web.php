@@ -28,7 +28,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
     //admin Dashboard
     Route::middleware(['CheckAuth'])->group(function () {
         Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
-        Route::get('users', [UserController::class, 'index'])->name('users');
-        Route::post('/users/create', [UserController::class,'create'])->name('userscreate');
+        // Route::get('users', [UserController::class, 'index'])->name('users');
+        // Route::post('/users/create', [UserController::class,'create'])->name('userscreate');
+        Route::resource('users',UserController::class);
+        Route::post('yearfilterSessionSave',[UserController::class,'sessionYearSave']);
     });
 });
