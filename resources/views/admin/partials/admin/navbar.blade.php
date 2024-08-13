@@ -43,8 +43,24 @@
                 <li class="nav-item">
                     <a href="{{route('admin.dashboard')}}" class="nav-link {{ (Request::route()->getName() == 'home') ? 'active' : '' }}">
                         <i class="fas fa-fire"></i>{{__('Dashboard')}}
+                    </a> 
+                </li>
+                <li class="nav-item">
+                    <a href="{{route('admin.users.index')}}" class="nav-link {{ (Request::route()->getName() == 'home') ? 'active' : '' }}">
+                        <i class="fas fa-fire"></i>{{__('Users')}}
+                    </a> 
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link " href="{{route('admin.departments.index')}}">
+                        <i class="fas fa-book"></i>{{__('Department')}}
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="{{route('admin.dashboard')}}" class="nav-link {{ (Request::route()->getName() == 'home') ? 'active' : '' }}">
+                        <i class="fas fa-fire"></i>{{__('Dashboard')}}
+                    </a> 
+                </li>
+                
                 @if(Gate::check('Manage Users') || Gate::check('Manage Clients') || Gate::check('Manage Roles') || Gate::check('Manage Permissions'))
                     @if((\Auth::user()->type == 'Owner'))
                         @can('Manage Users')

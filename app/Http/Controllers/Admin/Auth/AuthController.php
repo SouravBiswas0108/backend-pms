@@ -43,7 +43,7 @@ class AuthController extends Controller
             // $user->password = Hash::make($request->password);
             // $user->save();
             // dd(session()->user());
-        return redirect()->route('admin.users');
+        return redirect()->route('admin.users.index');
             // return redirect->route('users');
 
             // return response()->json(['message' => 'Login successful'], 200);

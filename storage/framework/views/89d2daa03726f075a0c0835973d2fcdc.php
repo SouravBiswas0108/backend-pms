@@ -46,8 +46,27 @@
                     <a href="<?php echo e(route('admin.dashboard')); ?>" class="nav-link <?php echo e((Request::route()->getName() == 'home') ? 'active' : ''); ?>">
                         <i class="fas fa-fire"></i><?php echo e(__('Dashboard')); ?>
 
+                    </a> 
+                </li>
+                <li class="nav-item">
+                    <a href="<?php echo e(route('admin.users.index')); ?>" class="nav-link <?php echo e((Request::route()->getName() == 'home') ? 'active' : ''); ?>">
+                        <i class="fas fa-fire"></i><?php echo e(__('Users')); ?>
+
+                    </a> 
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link " href="<?php echo e(route('admin.departments.index')); ?>">
+                        <i class="fas fa-book"></i><?php echo e(__('Department')); ?>
+
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="<?php echo e(route('admin.dashboard')); ?>" class="nav-link <?php echo e((Request::route()->getName() == 'home') ? 'active' : ''); ?>">
+                        <i class="fas fa-fire"></i><?php echo e(__('Dashboard')); ?>
+
+                    </a> 
+                </li>
+                
                 <?php if(Gate::check('Manage Users') || Gate::check('Manage Clients') || Gate::check('Manage Roles') || Gate::check('Manage Permissions')): ?>
                     <?php if((\Auth::user()->type == 'Owner')): ?>
                         <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Manage Users')): ?>

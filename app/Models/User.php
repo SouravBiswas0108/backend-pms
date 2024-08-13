@@ -37,6 +37,12 @@ class User extends Authenticatable implements JWTSubject
         'grade_level'
     ];
 
+    public function userDetails()
+    {
+        return $this->hasOne(UserDetail::class, 'staff_id', 'staff_id');
+    }
+
+
     /**
      * The attributes that should be hidden for serialization.
      *

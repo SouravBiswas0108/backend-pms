@@ -22,18 +22,18 @@
 
     <link rel="stylesheet" href="{{ asset('assets/libs/bootstrap-daterangepicker/daterangepicker.css') }}">
 
-    <link rel="stylesheet" href="{{ asset('/public/assets/libs/@fortawesome/fontawesome-free/css/all.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('/public/assets/libs/animate.css/animate.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('/public/assets/libs/select2/dist/css/select2.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('/public/assets/css/site.css') }}">
-    <link rel="stylesheet" href="{{ asset('/public/assets/css/ac.css') }}">
-    <link rel="stylesheet" href="{{ asset('/public/assets/css/datatables.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('/assets/libs/@fortawesome/fontawesome-free/css/all.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('/assets/libs/animate.css/animate.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('/assets/libs/select2/dist/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('/assets/css/site.css') }}">
+    <link rel="stylesheet" href="{{ asset('/assets/css/ac.css') }}">
+    <link rel="stylesheet" href="{{ asset('/assets/css/datatables.min.css') }}">
 
 
 
 
-    <link rel="stylesheet" href="{{ asset('/public/assets/css/stylesheet.css') }}">
-    <link rel="stylesheet" href="{{ asset('/public/assets/css/custom.css') }}">
+    <link rel="stylesheet" href="{{ asset('/assets/css/stylesheet.css') }}">
+    <link rel="stylesheet" href="{{ asset('/assets/css/custom.css') }}">
     @if($SITE_RTL=='on')
         <link rel="stylesheet" href="{{ asset('/css/bootstrap-rtl.css') }}">
     @endif

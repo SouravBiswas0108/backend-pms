@@ -26,10 +26,9 @@ class UserDetail extends Model
             'created_by',
             'type',
         ];
-   
+        public function user()
+        {
+            return $this->belongsTo(User::class, 'staff_id', 'staff_id');
+        }
 
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
 }

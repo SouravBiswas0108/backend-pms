@@ -520,7 +520,7 @@
         "serverSide": true,
 
         "ajax": {
-            "url": base_url + '/user-list',
+            "url": base_url + '/users',
             "type": "POST",
             "dataType": 'JSON',
             data: function(d) {
