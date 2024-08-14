@@ -125,8 +125,10 @@ class UserController extends Controller
                             <span class="slider round"></span>
                             </label>',
                         $userDetail->type ?? '',
-                        '<a href="' . url('/users/show/' . strtr(base64_encode($user->id), '+/=', '-_A')) . '.". class="edit-icon bg-warning"> <i class="fas fa-eye"></i></a><a href="' . url('/users/show/' . strtr(base64_encode($user->id), '+/=', '-_A')) . '.". class="edit-icon bg-warning"> 
-                              <i class="fas fa-eye"></i></a>',
+                        '<a href="' . url('/users/show/' . strtr(base64_encode($user->id), '+/=', '-_A')) . '.". class="edit-icon bg-warning"> <i class="fas fa-eye"></i></a>   <a href="' . url('/users/show/' . strtr(base64_encode($user->id), '+/=', '-_A')) . '.". class="edit-icon bg-warning"> 
+                              <i class="fas fa-eye"></i></a>
+                            <a href="' . url('/users/show/' . strtr(base64_encode($user->id), '+/=', '-_A')) . '.". class="edit-icon bg-warning"> 
+                              <i class="fas fa-eye"></i></a>  ',
                         $action
                     ];
                 }

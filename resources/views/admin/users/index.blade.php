@@ -1,4 +1,67 @@
 @extends('admin.layouts.admin')
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+ 
+ body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+}
+
+h2 {
+    color: #343a40;
+    text-align: center;
+}
+
+.table {
+    background-color: #fff;
+    margin-bottom: 0; /* Remove margin below the table to align with pagination */
+}
+
+.table-hover tbody tr:hover {
+    background-color: #e9ecef; /* Slightly lighter hover effect for better contrast */
+}
+
+.table-hover tbody tr {
+    color: #343a40; /* Ensure table rows have dark text color for readability */
+}
+
+.table-dark th {
+    background-color: #343a40; /* Dark background */
+    color: #ffffff; /* White text color */
+    font-weight: bold; /* Make the text bold */
+    font-size: 16px; /* Increase the font size */
+    text-align: center; /* Center align text */
+    vertical-align: middle; /* Vertically align text */
+    border: 2px solid #dee2e6; /* Add thicker border to make the header stand out */
+    padding: 10px; /* Add padding for better spacing */
+}
+
+.pagination-container {
+    margin-top: 20px;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #343a40;
+    border-color: #343a40;
+}
+
+.pagination .page-link {
+    color: #343a40;
+}
+
+.table .action-icons i {
+    cursor: pointer;
+    margin: 0 5px;
+    color: #343a40; /* Dark color for action icons */
+}
+
+.table .action-icons i:hover {
+    color: #007bff; /* Change color on hover */
+}
+
+</style>
 
 @section('title')
     {{ __('Manage Users') }}
@@ -229,29 +292,107 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <div class="table-responsive">
-                        <table class=" users_dataTablexxx">
-                            <thead>
-                                <tr>
-                                    <th>{{__('Id')}}</th>
-                                    <th>{{__('IPPIS Number')}}</th>
-                                    <th>{{__('User Id')}}</th>
-                                    <th>{{__('Name')}}</th>
-                                    <th>{{__('Email')}}</th>
-                                    <th>{{__('Activity')}}</th>
-                                    <th>{{__('Type')}}</th>
-                                    <th>{{__('Action')}}</th>
-                                </tr>
-                            </thead>
-                            <!-- Table body here -->
-                            
-                        </table>
+                    <div class="container mt-5">
+                        <h2 class="mb-4">User Data</h2>
+                        <div class="input-group mb-3">
+                            <input type="text" id="searchInput" class="form-control" placeholder="Search...">
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead >
+                                    <tr>
+                                        <th>Id</th>
+                                        <th>IPPIS Number</th>
+                                        <th>User Id</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Activity</th>
+                                        <th>Type</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="datatable">
+                                    <tr>
+                                        <td>1</td>
+                                        <td>12345</td>
+                                        <td>1001</td>
+                                        <td>John Doe</td>
+                                        <td>john@example.com</td>
+                                        <td>Active</td>
+                                        <td>Admin</td>
+                                        <td class="action-icons">
+                                            <span> 
+                                                <i class="fas fa-eye"></i>
+                                                <i class="fas fa-edit"></i>
+                                                <i class="fas fa-trash-alt"></i>
+                                            </span>
+
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td>12346</td>
+                                        <td>1002</td>
+                                        <td>Jane Smith</td>
+                                        <td>jane@example.com</td>
+                                        <td>Inactive</td>
+                                        <td>User</td>
+                                        <td class="action-icons">
+                                            <i class="bi bi-eye" title="Show"></i>
+                                            <i class="bi bi-pencil" title="Edit"></i>
+                                            <i class="bi bi-trash" title="Delete"></i>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>3</td>
+                                        <td>12347</td>
+                                        <td>1003</td>
+                                        <td>Robert Johnson</td>
+                                        <td>robert@example.com</td>
+                                        <td>Active</td>
+                                        <td>Manager</td>
+                                        <td class="action-icons">
+                                            <i class="bi bi-eye" title="Show"></i>
+                                            <i class="bi bi-pencil" title="Edit"></i>
+                                            <i class="bi bi-trash" title="Delete"></i>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="pagination-container d-flex justify-content-end">
+                            <ul id="pagination" class="pagination">
+                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            </ul>
+                        </div>
                     </div>
+                
                 </div>
             </div>
         </div>
     </div>
 @endsection
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const rows = document.querySelectorAll('#datatable tr');
+
+    function filterRows(query) {
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            const match = text.includes(query.toLowerCase());
+            row.style.display = match ? '' : 'none';
+        });
+    }
+
+    document.getElementById('searchInput').addEventListener('input', function () {
+        const query = this.value;
+        filterRows(query);
+    });
+});
+
+</script>
 
 
 
