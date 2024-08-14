@@ -26,7 +26,7 @@ class UserController extends Controller
             // if (\Auth::user()->can('Manage Users')) {
             $user = Auth::user();
             $filtered = 4;
-            $users = User::get();
+            $users = User::with('userDetails')->get();
             if ($user->type == 'Admin') {
 
                 $org_code = $user->org_code;
@@ -80,9 +80,23 @@ class UserController extends Controller
                 $users = $users->get();
             }
             $result_set = [];
-            // dd($users);
+            // // dd($users);
+            // foreach ($users as $user) {
+            //     // Access user details for the current user
+            //     $userDetail = $user->userDetails;
+
+            //     // Check if userDetail is not null before accessing properties
+            //     if ($userDetail) {
+            //         dd($userDetail); // Replace 'some_property' with actual property name
+            //     } else {
+            //         echo "No user details available for user with ID: {$user->id}";
+            //     }
+            // }
             if (isset($users) && !empty($users)) {
                 foreach ($users as $user) {
+                    // dd($user);
+                    $userDetail = $user->userDetails;
+                    //  dd($userDetail->type);
                     $action = '';
                     if (\Auth::user()->designation != 'admin') {
                         $action .= '<span><a href="' . url('/users/show/' . strtr(base64_encode($user->id), '+/=', '-_A')) . '" class="edit-icon bg-warning"><i class="fas fa-eye"></i></a></span>';
@@ -110,7 +124,9 @@ class UserController extends Controller
 
                             <span class="slider round"></span>
                             </label>',
-                        $user->type ?? '',
+                        $userDetail->type ?? '',
+                        '<a href="' . url('/users/show/' . strtr(base64_encode($user->id), '+/=', '-_A')) . '.". class="edit-icon bg-warning"> <i class="fas fa-eye"></i></a><a href="' . url('/users/show/' . strtr(base64_encode($user->id), '+/=', '-_A')) . '.". class="edit-icon bg-warning"> 
+                              <i class="fas fa-eye"></i></a>',
                         $action
                     ];
                 }
@@ -144,73 +160,73 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-try {
-   //validating Data
-   $validatedData = $request->validate([
-    'ippis_no' => 'required|string|max:200',
-    'staff_id' => 'required|string|max:20',
-    'fname' => 'required|string|max:255',
-    'mid_name' => 'nullable|string|max:255',
-    'lname' => 'nullable|string|max:255',
-    'email' => 'required|max:255|email|unique:users,email', // Check against `users` table
-    'phone' => 'nullable|string|max:20', // Adjust max length if necessary
-    'password' => 'required|string|min:6',
-    'job_title' => 'nullable|string|max:255',
-    'designation' => 'string|max:255',
-    'cadre' => 'nullable|string|max:255',
-    'date_of_current_posting' => 'nullable|date',
-    'date_of_MDA_posting' => 'nullable|date',
-    'date_of_last_promotion' => 'nullable|date',
-    'gender' => 'nullable|string|max:255',
-    'grade_level' => 'nullable|string|max:50',
-    'organization' => 'required|string|max:255',
-    'recovery_email' => 'nullable|max:255',
-    'role' =>'nullable|max:255'
-]);
+        try {
+            //validating Data
+            $validatedData = $request->validate([
+                'ippis_no' => 'required|string|max:200',
+                'staff_id' => 'required|string|max:20',
+                'fname' => 'required|string|max:255',
+                'mid_name' => 'nullable|string|max:255',
+                'lname' => 'nullable|string|max:255',
+                'email' => 'required|max:255|email|unique:users,email', // Check against `users` table
+                'phone' => 'nullable|string|max:20', // Adjust max length if necessary
+                'password' => 'required|string|min:6',
+                'job_title' => 'nullable|string|max:255',
+                'designation' => 'string|max:255',
+                'cadre' => 'nullable|string|max:255',
+                'date_of_current_posting' => 'nullable|date',
+                'date_of_MDA_posting' => 'nullable|date',
+                'date_of_last_promotion' => 'nullable|date',
+                'gender' => 'nullable|string|max:255',
+                'grade_level' => 'nullable|string|max:50',
+                'organization' => 'required|string|max:255',
+                'recovery_email' => 'nullable|max:255',
+                'role' => 'nullable|max:255'
+            ]);
 
-// dd($validatedData);
+            // dd($validatedData);
 
-User::create([
-    'ippis_no' => $validatedData['ippis_no'],
-    'staff_id' => $validatedData['staff_id'],
-    'F_name' => $validatedData['fname'],
-    'M_name' => $validatedData['mid_name'],
-    'L_name' => $validatedData['lname'],
-    'email' => $validatedData['email'],
-    'phone' => $validatedData['phone'],
-    'password' => hash::make($validatedData['password']),
-    'designation' => $validatedData['designation'],
-    'cadre' => $validatedData['cadre']
-    // 'organization' => $validatedData['organization'],
-]);
+            User::create([
+                'ippis_no' => $validatedData['ippis_no'],
+                'staff_id' => $validatedData['staff_id'],
+                'F_name' => $validatedData['fname'],
+                'M_name' => $validatedData['mid_name'],
+                'L_name' => $validatedData['lname'],
+                'email' => $validatedData['email'],
+                'phone' => $validatedData['phone'],
+                'password' => hash::make($validatedData['password']),
+                'designation' => $validatedData['designation'],
+                'cadre' => $validatedData['cadre']
+                // 'organization' => $validatedData['organization'],
+            ]);
 
-// dd(auth::user()->id);
+            // dd(auth::user()->id);
 
-UserDetail::create([
-    'staff_id' => 'STAFF352162',
-    'staff_id' => $validatedData['staff_id'],
-    'gender' => $validatedData['gender'],
-    'designation' => $validatedData['designation'],
-    'cadre' => $validatedData['cadre'],
-    // 'org_code' => $validatedData['organization'],
-    // 'org_name' => $validatedData['organization'],
-    'date_of_current_posting' => $request->input('date_of_current_posting'),
-    'date_of_MDA_posting' => $request->input('date_of_MDA_posting'),
-    'date_of_last_promotion' => $request->input('date_of_last_promotion'),
-    'job_title' => $validatedData['job_title'],
-    'grade_level' => $validatedData['grade_level'],
-    // 'org_name' => $validatedData['organization'],
-    'recovery_email' => $validatedData['recovery_email'],
-    'created_by' => auth::user()->id,
-    'type' => $validatedData['role'] ,
-]);
+            UserDetail::create([
+                'staff_id' => 'STAFF352162',
+                'staff_id' => $validatedData['staff_id'],
+                'gender' => $validatedData['gender'],
+                'designation' => $validatedData['designation'],
+                'cadre' => $validatedData['cadre'],
+                // 'org_code' => $validatedData['organization'],
+                // 'org_name' => $validatedData['organization'],
+                'date_of_current_posting' => $request->input('date_of_current_posting'),
+                'date_of_MDA_posting' => $request->input('date_of_MDA_posting'),
+                'date_of_last_promotion' => $request->input('date_of_last_promotion'),
+                'job_title' => $validatedData['job_title'],
+                'grade_level' => $validatedData['grade_level'],
+                // 'org_name' => $validatedData['organization'],
+                'recovery_email' => $validatedData['recovery_email'],
+                'created_by' => auth::user()->id,
+                'type' => $validatedData['role'],
+            ]);
 
 
-return redirect()->back();
-} catch (\Throwable $th) {
-    return ['message'=>$th->getMessage(),'line'=> $th->getLine()];
-}
-        
+            return redirect()->back();
+        } catch (\Throwable $th) {
+            return ['message' => $th->getMessage(), 'line' => $th->getLine()];
+        }
+
 
         // print_r($organization);die('++++');
 

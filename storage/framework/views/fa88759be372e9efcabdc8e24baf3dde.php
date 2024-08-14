@@ -513,7 +513,7 @@
 
         "ajax": {
             "url": base_url + '/users',
-            "type": "POST",
+            "type": "GET",
             "dataType": 'JSON',
             data: function(d) {
                 
