@@ -242,9 +242,13 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show( $user_id)
     {
-        //
+        $user_id = strtr(base64_decode($user_id), '+/=', '-_A');
+        $usr  = Auth::user();
+        $user = User::find($user_id);
+        return view('admin.users.show', compact('user'));
+        // dd($user->userDetails->gender);
     }
 
     /**

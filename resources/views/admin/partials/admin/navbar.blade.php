@@ -13,7 +13,7 @@
 <div class="sidenav custom-sidenav" id="sidenav-main">
     <div class="sidenav-header d-flex align-items-center">
         <a style="background-color: #fff;margin: 0px 10px;border-radius: 10px;" class="navbar-brand" href="{{route('admin.dashboard')}}">
-            <img src="{{asset(Storage::url('logo/logo-full.png'))}}" alt="{{ config('app.name', 'LeadGo') }}" class="navbar-brand-img">
+        <img src="{{ asset('admin/logo/logo-full.png') }}" alt="{{ config('app.name', 'LeadGo') }}" class="navbar-brand-img">
         </a>
         <div class="ml-auto">
             <div class="sidenav-toggler sidenav-toggler-dark d-md-none" data-action="sidenav-unpin" data-target="#sidenav-main">
