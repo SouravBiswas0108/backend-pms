@@ -16,6 +16,8 @@ class AuthController extends Controller
     //     $this->middleware('auth:api', ['except' => ['login', 'register']]);
     // }
 
+    //submission from ubuntu
+
 
     public function login(Request $request)
     {
