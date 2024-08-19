@@ -390,12 +390,21 @@
                                                     class="edit-icon bg-warning">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
-                                                <i class="fas fa-edit"></i>
-                                               
-                                                <a class="delete-icon" data-confirm="{{__('Are You Sure?').'|'.__('This action can not be undone. Do you want to continue?')}}" data-confirm-yes="document.getElementById('delete-form-{{$user->id}}').submit();">
-                                                            <i class="fas fa-trash"></i></a>
-                                                            {!! Form::open(['method' => 'DELETE', 'route' => ['users.destroy', $user->id],'id'=>'delete-form-'.$user->id]) !!}
-                                                            {!! Form::close() !!}
+                                                <a href="javascript:void(0)" class="edit-icon" data-url="{{route('admin.users.edit',['user' => strtr(base64_encode($user->id), '+/=', '-_A')])}}" data-ajax-popup="true" data-title="{{__('Edit User')}}">
+                                                <i class="fas fa-pencil-alt"></i></a>
+                                                <form id="delete-form-{{ $user->id }}" method="POST"
+                                                    action="{{ route('admin.users.destroy', $user->id) }}">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <a href="#"
+                                                        onclick="event.preventDefault(); confirmDelete({{ $user->id }});"
+                                                        class="delete-icon">
+                                                        <i class="fas fa-trash"></i>
+                                                    </a>
+                                                </form>
+
+
+
                                             </span>
 
                                         </td>
@@ -418,6 +427,10 @@
 @endsection
 
 
+<!-- Edit User Modal -->
+
+<!-- end edit user -->
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const rows = document.querySelectorAll('#datatable tr');
@@ -436,4 +449,36 @@
         });
     });
 
+    function confirmDelete(userId) {
+        if (confirm('{{ __('Are You Sure?') }} | {{ __('This action cannot be undone. Do you want to continue?') }}')) {
+            document.getElementById('delete-form-' + userId).submit();
+        }
+    }
+
+
+
+//edit user
+
+$(document).on('click', '.edit-icon', function() {
+    var url = $(this).data('url');
+    var title = $(this).data('title');
+
+    // Set the modal title
+    $('#editUserModalLabel').text(title);
+
+    // Load the form via AJAX
+    $.ajax({
+        url: url,
+        method: 'GET',
+        success: function(data) {
+            // Inject the form content into the modal body
+            $('#editUserModal .modal-body').html(data);
+            // Open the modal
+            $('#editUserModal').modal('show');
+        },
+        error: function(xhr) {
+            alert('An error occurred while loading the form.');
+        }
+    });
+});
 </script>

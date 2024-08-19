@@ -396,13 +396,20 @@
                                                     class="edit-icon bg-warning">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
-                                                <i class="fas fa-edit"></i>
-                                               
-                                                <a class="delete-icon" data-confirm="<?php echo e(__('Are You Sure?').'|'.__('This action can not be undone. Do you want to continue?')); ?>" data-confirm-yes="document.getElementById('delete-form-<?php echo e($user->id); ?>').submit();">
-                                                            <i class="fas fa-trash"></i></a>
-                                                            <?php echo Form::open(['method' => 'DELETE', 'route' => ['users.destroy', $user->id],'id'=>'delete-form-'.$user->id]); ?>
+                                                <a href="javascript:void(0)" class="edit-icon" data-url="<?php echo e(route('admin.users.edit',['user' => strtr(base64_encode($user->id), '+/=', '-_A')])); ?>" data-ajax-popup="true" data-title="<?php echo e(__('Edit User')); ?>">
+                                                <i class="fas fa-pencil-alt"></i></a>
+                                                <form id="delete-form-<?php echo e($user->id); ?>" method="POST"
+                                                    action="<?php echo e(route('admin.users.destroy', $user->id)); ?>">
+                                                    <?php echo csrf_field(); ?>
+                                                    <?php echo method_field('DELETE'); ?>
+                                                    <a href="#"
+                                                        onclick="event.preventDefault(); confirmDelete(<?php echo e($user->id); ?>);"
+                                                        class="delete-icon">
+                                                        <i class="fas fa-trash"></i>
+                                                    </a>
+                                                </form>
 
-                                                            <?php echo Form::close(); ?>
+
 
                                             </span>
 
@@ -426,6 +433,10 @@
 <?php $__env->stopSection(); ?>
 
 
+<!-- Edit User Modal -->
+
+<!-- end edit user -->
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const rows = document.querySelectorAll('#datatable tr');
@@ -444,5 +455,37 @@
         });
     });
 
+    function confirmDelete(userId) {
+        if (confirm('<?php echo e(__('Are You Sure?')); ?> | <?php echo e(__('This action cannot be undone. Do you want to continue?')); ?>')) {
+            document.getElementById('delete-form-' + userId).submit();
+        }
+    }
+
+
+
+//edit user
+
+$(document).on('click', '.edit-icon', function() {
+    var url = $(this).data('url');
+    var title = $(this).data('title');
+
+    // Set the modal title
+    $('#editUserModalLabel').text(title);
+
+    // Load the form via AJAX
+    $.ajax({
+        url: url,
+        method: 'GET',
+        success: function(data) {
+            // Inject the form content into the modal body
+            $('#editUserModal .modal-body').html(data);
+            // Open the modal
+            $('#editUserModal').modal('show');
+        },
+        error: function(xhr) {
+            alert('An error occurred while loading the form.');
+        }
+    });
+});
 </script>
 <?php echo $__env->make('admin.layouts.admin', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /var/www/html/Office/backend-fmepms/backend-pms/resources/views/admin/users/index.blade.php ENDPATH**/ ?>

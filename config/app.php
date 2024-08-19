@@ -168,6 +168,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        Collective\Html\HtmlServiceProvider::class, // Add this line
     ])->toArray(),
 
     /*
@@ -183,6 +184,8 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
+        'Form' => Collective\Html\FormFacade::class,  // Add this line
+        'Html' => Collective\Html\HtmlFacade::class,  // Add this line
     ])->toArray(),
 
 ];

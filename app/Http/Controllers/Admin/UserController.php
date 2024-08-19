@@ -258,7 +258,9 @@ class UserController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $userId = base64_decode(strtr($id, '-_A', '+/='));
+    $user = User::findOrFail($userId);
+    return view('admin.users.edit', compact('user'));
     }
 
     /**
@@ -266,7 +268,7 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+       dd($id);
     }
 
     /**
@@ -274,7 +276,15 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $user = User::where('id',$id)->first();
+
+        if ($user) {
+        $user->delete();
+        return redirect()->route('admin.users.index')->with('success', __('User Deleted Successfully!'));
+        }
+        else{
+            return redirect()->back()->with('error', __('Invalid User.'));
+        }
     }
 
     public function sessionYearSave()
