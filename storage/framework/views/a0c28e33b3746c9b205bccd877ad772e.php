@@ -397,7 +397,13 @@
                                                     <i class="fas fa-eye"></i>
                                                 </a>
                                                 <i class="fas fa-edit"></i>
-                                                <i class="fas fa-trash-alt"></i>
+                                               
+                                                <a class="delete-icon" data-confirm="<?php echo e(__('Are You Sure?').'|'.__('This action can not be undone. Do you want to continue?')); ?>" data-confirm-yes="document.getElementById('delete-form-<?php echo e($user->id); ?>').submit();">
+                                                            <i class="fas fa-trash"></i></a>
+                                                            <?php echo Form::open(['method' => 'DELETE', 'route' => ['users.destroy', $user->id],'id'=>'delete-form-'.$user->id]); ?>
+
+                                                            <?php echo Form::close(); ?>
+
                                             </span>
 
                                         </td>

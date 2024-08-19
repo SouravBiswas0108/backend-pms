@@ -34,5 +34,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('users',UserController::class);
         Route::post('yearfilterSessionSave',[UserController::class,'sessionYearSave']);
         Route::resource('departments',DepartmentController::class);
+        Route::post('updateprofile',[UserController::class,'updateProfile'])->name('updateProfile');
+        Route::post('userpassword',[UserController::class,'userpassword'])->name('userPassword');
+
     });
 });

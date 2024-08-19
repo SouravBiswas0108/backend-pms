@@ -45,7 +45,7 @@
                         </ul>
                         <div class="tab-content">
                             <div id="personal_info" class="tab-pane in active">
-                                <form method="post" action="#" enctype="multipart/form-data">
+                                <form method="post" action="{{route('admin.updateProfile')}}" enctype="multipart/form-data">
                                     @csrf
                                     <div class="row">
                                         <div class="col-lg-6 col-sm-6">
@@ -116,7 +116,7 @@
                                     </div>
                                 </form>
                                 @if($user->avatar!='')
-                                    <form action="{{route('delete.avatar')}}" method="post" id="delete_avatar">
+                                    <form action="#" method="post" id="delete_avatar">
                                         <input type="hidden" name="user_ai_id" value="{{ $user->id }}">
                                         @csrf
                                         @method('DELETE')
@@ -124,7 +124,7 @@
                                 @endif
                             </div>
                             <div id="change_password" class="tab-pane">
-                                <form method="post" action="">
+                                <form method="post" action="{{route('admin.userPassword')}}">
                                     @csrf
                                     <div class="row">
                                        <!--  <div class="col-lg-6 col-sm-6 form-group">

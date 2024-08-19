@@ -44,7 +44,7 @@
                         </ul>
                         <div class="tab-content">
                             <div id="personal_info" class="tab-pane in active">
-                                <form method="post" action="#" enctype="multipart/form-data">
+                                <form method="post" action="<?php echo e(route('admin.updateProfile')); ?>" enctype="multipart/form-data">
                                     <?php echo csrf_field(); ?>
                                     <div class="row">
                                         <div class="col-lg-6 col-sm-6">
@@ -178,7 +178,7 @@ unset($__errorArgs, $__bag); ?>
                                     </div>
                                 </form>
                                 <?php if($user->avatar!=''): ?>
-                                    <form action="<?php echo e(route('delete.avatar')); ?>" method="post" id="delete_avatar">
+                                    <form action="#" method="post" id="delete_avatar">
                                         <input type="hidden" name="user_ai_id" value="<?php echo e($user->id); ?>">
                                         <?php echo csrf_field(); ?>
                                         <?php echo method_field('DELETE'); ?>
@@ -186,7 +186,7 @@ unset($__errorArgs, $__bag); ?>
                                 <?php endif; ?>
                             </div>
                             <div id="change_password" class="tab-pane">
-                                <form method="post" action="">
+                                <form method="post" action="<?php echo e(route('admin.userPassword')); ?>">
                                     <?php echo csrf_field(); ?>
                                     <div class="row">
                                        <!--  <div class="col-lg-6 col-sm-6 form-group">

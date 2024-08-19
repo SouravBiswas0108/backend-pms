@@ -135,10 +135,10 @@ class UserController extends Controller
             }
 
             $json_data = array(
-                "draw"            => intval($postdata['draw']),
-                "recordsTotal"    => intval($total),
+                "draw" => intval($postdata['draw']),
+                "recordsTotal" => intval($total),
                 "recordsFiltered" => intval($filtered),
-                "data"            => $result_set,
+                "data" => $result_set,
             );
             // echo json_encode($json_data);
             return $json_data;
@@ -155,7 +155,9 @@ class UserController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create() {}
+    public function create()
+    {
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -242,10 +244,10 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show( $user_id)
+    public function show($user_id)
     {
         $user_id = strtr(base64_decode($user_id), '+/=', '-_A');
-        $usr  = Auth::user();
+        $usr = Auth::user();
         $user = User::find($user_id);
         return view('admin.users.show', compact('user'));
         // dd($user->userDetails->gender);
@@ -286,5 +288,82 @@ class UserController extends Controller
             session()->put('year2', $year);
         }
         return response()->json(['success' => 'sucess']);
+    }
+
+
+    public function updateProfile(Request $request)
+    {
+        // dd($request->all());
+        $objUser = Auth::user();
+        $validation = [];
+        $validation['F_name'] = 'required';
+        $validation['L_name'] = 'required';
+        // $validation['email'] = 'required|email|unique:users,email,' . Auth::user()->id;
+        $validation['email'] = 'required|email';
+        if ($request->avatar) {
+            $validation['avatar'] = 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048';
+        }
+        $request->validate($validation);
+
+        if ($request->avatar) {
+            // dd($request->all());
+            \File::delete(storage_path('avatars/' . $objUser->avatar));
+            $avatarName = $objUser->id . '_avatar' . time() . '.' . $request->avatar->getClientOriginalExtension();
+            $request->avatar->storeAs('avatars', $avatarName);
+            // print_r($request->avatar->storeAs('avatars', $avatarName));die('++++');
+            $post['avatar'] = $avatarName;
+        }
+        $post['F_name'] = $request['F_name'];
+        $post['M_name'] = ($request['M_name']) ? $request['M_name'] : '';
+        $post['L_name'] = $request['L_name'];
+        $post['email'] = $request['email'];
+        $post['updated_at'] = date('Y-m-d H:i:s');
+
+        $objUser->where('id', $request['user_ai_id'])->update($post);
+        return redirect()->back()->with('success', __('Profile Updated Successfully!'));
+        // dd($request->all());
+
+
+    }
+
+    public function userpassword(Request $request)
+    {
+        $randomString = '';
+        $staff_name = '';
+        $uArr = [];
+        if (Auth::Check()) {
+            $request_data = $request->All();
+            $randomString = chr(rand(65, 90));
+            for ($i = 0; $i < 6; $i++) {
+                if ($i < 6) {
+                    $randomString .= rand(0, 9);
+                }
+                if ($i == 8) {
+                    //$randomString.=chr(rand(65,90));
+                }
+            }
+            $obj_user = User::find($request_data['user_tbl_id']);
+            $message = 'Please Copy this New Password : ' . $randomString . ' For Staff Id : ' . $request_data['user_staff_id'];
+            session([
+                'pwd_reset_msg' => [
+                    $request_data['user_staff_id'] => $message
+                ]
+            ]);
+
+            $data = [
+                'email' => $obj_user->email,
+                'password' => $randomString,
+            ];
+            $obj_user->password = Hash::make($randomString);
+            $obj_user->save();
+            $encode_id = strtr(base64_encode($request_data['user_tbl_id']), '+/=', '-_A');
+           
+            return redirect()->route('admin.users.show', $encode_id)->with('success', __('Your password is updated now and send to your registered email! Please check your mail'));
+           
+        }
+        else
+        {
+            return redirect()->route('users.show',$encode_id)->with('error', __('Something is wrong!'));
+        }
     }
 }
