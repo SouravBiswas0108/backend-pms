@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('department_staff', function (Blueprint $table) {
             $table->id();
             $table->string('department_id', 20);
-            $table->string('org_code', 20);
+            $table->string('org_code', 20)->nullable();
             $table->string('staff_id', 20)->nullable();
             $table->string('assign_role_name')->nullable();
             $table->string('assign_role_id', 20)->nullable();

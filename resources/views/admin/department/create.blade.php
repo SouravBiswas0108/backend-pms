@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('admin.layouts.admin')
 
 @section('title')
     {{__('Create Department')}}
@@ -14,7 +14,7 @@
 
 
 @section('content')
-    <form class="" method="post" action="{{ route('department.store') }}">
+    <form class="" method="post" action="{{ route('admin.departments.store') }}">
         @csrf
         <div class="row step_1">
             <div class="col-md-12">
@@ -107,9 +107,9 @@
                                         @foreach ($stafflist as $staffs)
                                         <tr>
                                             <td  style="color:black;">
-                                            {{ ($staffs['fname'] !='') ? ($staffs['fname']) : "" }}
-                                            {{ ($staffs['mid_name'] !='') ? ($staffs['mid_name']) : "" }}
-                                            {{ ($staffs['lname'] !='') ? ($staffs['lname']) : "" }}
+                                            {{ ($staffs['F_name'] !='') ? ($staffs['F_name']) : "" }}
+                                            {{ ($staffs['M_name'] !='') ? ($staffs['M_name']) : "" }}
+                                            {{ ($staffs['L_name'] !='') ? ($staffs['L_name']) : "" }}
                                     {{ ($staffs['staff_id'] !='') ? ('('.$staffs['staff_id'].')') : "" }}
                                             </td>
                                             <td style="color:black;">

@@ -9,6 +9,18 @@ class DepartmentAssignStaff extends Model
 {
     use HasFactory;
 
+    protected $table = 'department_staff';
+    protected $fillable = [
+        'department_id',
+        'org_code',
+        'staff_id',
+        'staff_name',
+        'assign_role_name',
+        'assign_role_id',
+        'year',
+        'created_by',
+    ];
+
     public function department()
     {
         return $this->belongsTo(Department::class);

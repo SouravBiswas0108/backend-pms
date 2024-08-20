@@ -9,6 +9,12 @@ class Department extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'department_id',
+        'department_name',
+        'org_code',
+    ];
+
     public function departmentAssignStaff()
     {
         return $this->hasOne(DepartmentAssignStaff::class);
