@@ -259,8 +259,8 @@ class UserController extends Controller
     public function edit(string $id)
     {
         $userId = base64_decode(strtr($id, '-_A', '+/='));
-    $user = User::findOrFail($userId);
-    return view('admin.users.edit', compact('user'));
+        $user = User::findOrFail($userId);
+        return view('admin.users.edit', compact('user'));
     }
 
     /**
@@ -268,7 +268,104 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-       dd($id);
+        // dd($id);
+        $user = User::with('userDetails')->where('id', $id)->first();
+
+        $changesMade = false;
+
+        if ($user->ippis_no !== $request->ippis_no) {
+            $user->ippis_no = $request->ippis_no;
+            $changesMade = true;
+        }
+
+        if ($user->F_name !== $request->fname) {
+            $user->F_name = $request->fname;
+            $changesMade = true;
+        }
+
+        if ($user->M_name !== $request->mid_name) {
+            $user->M_name = $request->mid_name;
+            $changesMade = true;
+        }
+        if ($user->L_name !== $request->lname) {
+            $user->L_name = $request->lname;
+            $changesMade = true;
+        }
+        if ($user->email !== $request->email) {
+            $user->email = $request->email;
+            $changesMade = true;
+        }
+        if ($user->phone !== $request->phone) {
+            $user->phone = $request->phone;
+            $changesMade = true;
+        }
+        if ($user->userDetails->job_title !== $request->job_title) {
+            $user->userDetails->job_title = $request->job_title;
+            $changesMade = true;
+        }
+        if ($user->userDetails->designation !== $request->designation) {
+            $user->userDetails->designation = $request->designation;
+            $changesMade = true;
+        }
+        if ($user->userDetails->cadre !== $request->cadre) {
+            $user->userDetails->cadre = $request->cadre;
+            $changesMade = true;
+        }
+        if ($user->userDetails->date_of_current_posting !== $request->date_of_current_posting) {
+            $user->userDetails->date_of_current_posting = $request->date_of_current_posting;
+            $changesMade = true;
+        }
+        if ($user->userDetails->date_of_MDA_posting !== $request->date_of_MDA_posting) {
+            $user->userDetails->date_of_MDA_posting = $request->date_of_MDA_posting;
+            $changesMade = true;
+        }
+        if ($user->userDetails->date_of_last_promotion !== $request->date_of_last_promotion) {
+            $user->userDetails->date_of_last_promotion = $request->date_of_last_promotion;
+            $changesMade = true;
+        }
+        if ($user->userDetails->gender !== $request->gender) {
+            $user->userDetails->gender = $request->gender;
+            $changesMade = true;
+        }
+        if ($user->userDetails->grade_level !== $request->grade_level) {
+            $user->userDetails->grade_level = $request->grade_level;
+            $changesMade = true;
+        }
+        if ($user->userDetails->org_name !== $request->organization) {
+            $user->userDetails->org_name = $request->organization;
+            $changesMade = true;
+        }
+        if ($user->userDetails->type !== $request->role) {
+            $user->userDetails->type = $request->role;
+            $changesMade = true;
+        }
+        if ($user->userDetails->recovery_email !== $request->recovery_email) {
+            $user->userDetails->recovery_email = $request->recovery_email;
+            $changesMade = true;
+        }
+
+
+        
+        if ($changesMade) {
+            $user->save(); // Save the User model
+        
+            // Check if userDetails exists before trying to save
+            if ($user->userDetails) {
+                $user->userDetails->save(); // Save the UserDetails model
+            }
+        
+            return redirect()->back()->with('success', 'User details updated successfully.');
+        } else {
+            return redirect()->back()->with('info', 'No changes were made.');
+        }
+
+
+
+
+        
+
+
+      
     }
 
     /**
@@ -276,13 +373,12 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        $user = User::where('id',$id)->first();
+        $user = User::where('id', $id)->first();
 
         if ($user) {
-        $user->delete();
-        return redirect()->route('admin.users.index')->with('success', __('User Deleted Successfully!'));
-        }
-        else{
+            $user->delete();
+            return redirect()->route('admin.users.index')->with('success', __('User Deleted Successfully!'));
+        } else {
             return redirect()->back()->with('error', __('Invalid User.'));
         }
     }
@@ -367,13 +463,11 @@ class UserController extends Controller
             $obj_user->password = Hash::make($randomString);
             $obj_user->save();
             $encode_id = strtr(base64_encode($request_data['user_tbl_id']), '+/=', '-_A');
-           
+
             return redirect()->route('admin.users.show', $encode_id)->with('success', __('Your password is updated now and send to your registered email! Please check your mail'));
-           
-        }
-        else
-        {
-            return redirect()->route('users.show',$encode_id)->with('error', __('Something is wrong!'));
+
+        } else {
+            return redirect()->route('users.show', $encode_id)->with('error', __('Something is wrong!'));
         }
     }
 }
