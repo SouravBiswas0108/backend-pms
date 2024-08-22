@@ -13,7 +13,7 @@ class EmployeeSubTaskController extends Controller
      */
     public function index()
     {
-        //
+        dd(456);
     }
 
     /**
