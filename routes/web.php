@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\Auth\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DepartmentController;
 use App\Http\Controllers\Admin\UserController;
+use Illuminate\Routing\Route as RoutingRoute;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -36,6 +37,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('departments',DepartmentController::class);
         Route::post('updateprofile',[UserController::class,'updateProfile'])->name('updateProfile');
         Route::post('userpassword',[UserController::class,'userpassword'])->name('userPassword');
+        
 
     });
 });

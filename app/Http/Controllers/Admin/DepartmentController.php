@@ -111,7 +111,8 @@ class DepartmentController extends Controller
                 );
             }
         }
-        return redirect()->route('department')->with('success', __('Department created Successfully!') . ((!empty($resp) && $resp['is_success'] == false && !empty($resp['error'])) ? '<br> <span class="text-danger">' . $resp['error'] . '</span>' : ''));
+        return redirect()->route('admin.departments.index')->with('success', __('Department created Successfully!') . ((!empty($resp) && $resp['is_success'] == false && !empty($resp['error'])) ? '<br> <span class="text-danger">' . $resp['error'] . '</span>' : ''));
+
         // dd($objUser);
     }
 
