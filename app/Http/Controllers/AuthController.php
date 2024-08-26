@@ -21,6 +21,7 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
+        // dd(123);
         $request->validate([
             'email' => 'required|string|email',
             'password' => 'required|string',
@@ -105,7 +106,7 @@ class AuthController extends Controller
     }
     public function logout(Request $request)
     {
-        dd(767676);
+        // dd(767676);
         try {
             // Parse the token
             $token = JWTAuth::getToken();
