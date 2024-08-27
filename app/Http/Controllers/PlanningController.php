@@ -18,8 +18,10 @@ class PlanningController extends Controller
         $departmentId = 'DP670434'; 
         $staffIdToFind = 'STAFF705069';
 
-        $userInfo = DepartmentAssignStaff::where('department_id',$departmentId)->where('staff_id',$staffIdToFind)->first()->toArray();
 
+       $departmentName = Department::select('department_name')->where('department_id',$departmentId)->first();
+        $userInfo = DepartmentAssignStaff::where('department_id',$departmentId)->where('staff_id',$staffIdToFind)->first()->toArray();
+         
         $staffDetails =  User::with('userDetails')->where('staff_id',$userInfo['staff_id'])->get()->toArray();
        
         $supervisorDetails = User::with('userDetails')->where('staff_id',$userInfo['supervisor_id'])->get()->toArray();
@@ -30,6 +32,7 @@ class PlanningController extends Controller
             'staffDetails' => $staffDetails,
             'supervisorDetails' => $supervisorDetails,
             'officerDetails' => $officerDetails,
+            'departmentName' => $departmentName->department_name,
         ];
         
         // Print or return the combined array
