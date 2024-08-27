@@ -79,7 +79,7 @@
                                                         onclick="blockSelection()"></i></a>
 
 
-                                                <a href="#"
+                                                <a href="<?php echo e(route('admin.assignUserRole',encrypt($dept['department_id']))); ?>"
                                                     class="btn btn-xs btn-white btn-icon-only width-auto edit-icon assign_staff"
                                                     data-url="" data-ajax-popup=""
                                                     data-title="<?php echo e(__('Assign Staff Department')); ?>">Assign Officers</a>

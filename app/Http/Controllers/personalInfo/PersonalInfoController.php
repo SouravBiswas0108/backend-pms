@@ -8,6 +8,7 @@ use App\Models\Organization;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Lcobucci\JWT\Encoder;
 
 class PersonalInfoController extends Controller
 {
