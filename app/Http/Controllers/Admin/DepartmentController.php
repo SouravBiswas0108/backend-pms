@@ -262,13 +262,13 @@ class DepartmentController extends Controller
         // dd($request->dept_name);
         $oldDepartmentAssignStaffs = DepartmentAssignStaff::select('staff_id')->where('department_id', $departmentId)->get();
         $departmentDetails = Department::where('department_id', $departmentId)->first();
-        
-         if ($departmentDetails->department_name != $request->dept_name ) {
+
+        if ($departmentDetails->department_name != $request->dept_name) {
             # code...
-            $departmentDetails->department_name = $request->dept_name ;
+            $departmentDetails->department_name = $request->dept_name;
             $departmentDetails->save();
-             
-         }
+
+        }
         $oldStaff = [];
         foreach ($oldDepartmentAssignStaffs as $key => $staff) {
             # code...
@@ -285,7 +285,7 @@ class DepartmentController extends Controller
             dd(123);
         }
 
-       return to_route('admin.departments.index');
+        return to_route('admin.departments.index');
     }
 
     /**
@@ -297,7 +297,60 @@ class DepartmentController extends Controller
     }
 
 
-    public function assignUserRole(string $id){
-        dd(123);
+    public function assignUserRole(string $id)
+    {
+
+        $departmentId = decrypt($id);
+        if (session()->has('year2')) {
+            $year = session('year2');
+            //dd($year);
+        } else {
+            $year = date('Y');
+        }
+        $department = Department::where('department_id',$departmentId)->first();
+        // dd($department);
+        $departmentstafflists = DepartmentAssignStaff::where('department_id', $departmentId)->where('year', $year)->get()->toArray();
+
+
+        $collectionStaff = collect($departmentstafflists);
+        $officer = $collectionStaff->firstWhere('assign_role_name', 'Officer');
+        $officer_id = $officer['staff_id'] ?? null;
+
+        $supervisor_id = [];
+
+        $data = [];
+        // $departmentstafflist = [];
+        $objUser = Auth::user();
+        // dd($officer_id);
+
+        if (isset($departmentstafflists) && !empty($departmentstafflists)) {
+            // $org_code = $objUser->org_code;
+          
+            if (($departmentstafflists != '') || ($departmentstafflists != null)) {
+
+                foreach ($departmentstafflists as $key => $value) {
+
+                    $userstaff = User::with('userDetails')->where('staff_id', $value['staff_id'])->first();
+                    if (isset($userstaff) && !empty($userstaff)) {
+                        $fname = ($userstaff['F_name'] != "") ? $userstaff['F_name'] . ' ' : '';
+                        $mid_name = ($userstaff['M_name'] != "") ? $userstaff['M_name'] . ' ' : '';
+                        $lname = ($userstaff['L_name'] != "") ? $userstaff['L_name'] . ' ' : '';
+
+                        $staff_name = $fname . $mid_name . $lname;
+                        $data['stafflist'][$value['staff_id']] = $fname . $mid_name . $lname;
+                    }
+                    if ($value['assign_role_name'] == 'Supervisor') {
+                        # code...
+                        $supervisor_id[] = $value['department_id'];
+                    }
+                }
+            }
+
+          
+        }
+
+        return view('admin.department.assignUserRole', compact('department','data','supervisor_id','officer_id'));
+
+        // dd($departmentstafflists);
     }
 }

@@ -38,7 +38,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         //department
         Route::resource('departments',DepartmentController::class);
         Route::get('/department/assignuserRole/{department}',[DepartmentController::class,'assignUserRole'])->name('assignUserRole');
-
+        Route::post('/department/assignuserstore',[DepartmentController::class,'assignuserstore'])->name('assignuserstore');
 
         Route::post('updateprofile',[UserController::class,'updateProfile'])->name('updateProfile');
         Route::post('userpassword',[UserController::class,'userpassword'])->name('userPassword');
