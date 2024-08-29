@@ -23,7 +23,7 @@ class DepartmentAssignStaff extends Model
 
     public function department()
     {
-        return $this->belongsTo(Department::class);
+        return $this->belongsTo(Department::class, 'department_id', 'department_id'); // Make sure 'department_id' is correct
     }
     public function user()
     {

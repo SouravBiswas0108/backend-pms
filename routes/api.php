@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Department\UserDepartmentController;
 use App\Http\Controllers\EmployeeSubTaskController;
 use App\Http\Controllers\personalInfo\PersonalInfoController;
 use App\Http\Controllers\PlanningController;
@@ -26,6 +27,7 @@ Route::middleware('auth:api')->group(function () {
     Route::resource('planning', PlanningController::class);
     // Route::resource('employeetask', EmployeeSubTaskController::class);
     Route::resource('personalinfo',PersonalInfoController::class);
+    Route::resource('department',UserDepartmentController::class);
 
     // Logout route
     Route::post('/logout', [AuthController::class, 'logout']);

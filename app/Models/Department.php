@@ -15,8 +15,8 @@ class Department extends Model
         'org_code',
     ];
 
-    public function departmentAssignStaff()
+    public function departmentAssignStaffs()
     {
-        return $this->hasMany(DepartmentAssignStaff::class,'department_id', 'department_id');
+        return $this->hasMany(DepartmentAssignStaff::class, 'department_id', 'department_id');
     }
 }

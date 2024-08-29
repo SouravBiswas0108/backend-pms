@@ -26,6 +26,8 @@ class PersonalInfoController extends Controller
         $role = $payload->get('role');
 
        
+
+       
         $organization = Organization::first();
       
         $user = User::with('userDetails')->where('staff_id', $staffIdToFind)->first();
