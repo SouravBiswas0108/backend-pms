@@ -282,7 +282,7 @@ class DepartmentController extends Controller
         if (isset($staffToRemove) && !empty($staffToRemove)) {
             $departmentId = decrypt($id);
             $deleteStaff = DepartmentAssignStaff::where('department_id', $departmentId)->whereIn('staff_id', $staffToRemove)->delete();
-            dd(123);
+            // dd(123);
         }
 
         return to_route('admin.departments.index');

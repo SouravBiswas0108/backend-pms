@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DepartmentAssignStaff;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -20,23 +21,41 @@ class AuthController extends Controller
 
 
     public function login(Request $request)
-    {
-        // dd(123);
-        $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-        ]);
+{
+    $request->validate([
+        'email' => 'required|string|email',
+        'password' => 'required|string',
+        'role' => 'required|string',
+    ]);
 
-        $credentials = $request->only('email', 'password');
+    // Extract credentials and role
+    $credentials = $request->only('email', 'password');
+    $role = $request->input('role');
 
-        if (!$token = JWTAuth::attempt($credentials)) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Unauthorized',
-            ], 401);
-        }
+    // Attempt to authenticate with provided credentials
+    if (!$token = JWTAuth::attempt($credentials)) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Unauthorized',
+        ], 401);
+    }
 
-        $user = JWTAuth::user();
+    // Retrieve authenticated user
+    $customClaims = ['role' => $role];
+    $token = JWTAuth::setToken($token)->claims($customClaims)->attempt($credentials);
+    $user = JWTAuth::setToken($token)->toUser();
+    
+
+    // Check if the user has the required role in DepartmentAssignStaff
+    $exists = DepartmentAssignStaff::where('staff_id', $user->staff_id)
+                                   ->where('assign_role_name', $role)
+                                   ->exists();
+
+    if ($exists) {
+        // Create token with custom claims
+        // $customClaims = ['role' => $role];
+        // $token = JWTAuth::claims($customClaims)->attempt($credentials);
+
         return response()->json([
             'status' => 'success',
             'user' => $user,
@@ -46,6 +65,13 @@ class AuthController extends Controller
             ]
         ]);
     }
+
+    return response()->json([
+        'status' => 'error',
+        'message' => 'Unauthorized',
+    ], 401);
+}
+
     // public function login(Request $request)
     // {
     //     $request->validate([

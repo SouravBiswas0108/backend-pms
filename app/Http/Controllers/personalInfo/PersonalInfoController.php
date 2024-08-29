@@ -8,22 +8,28 @@ use App\Models\Organization;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
-use Lcobucci\JWT\Encoder;
+use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
+use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
 
 class PersonalInfoController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $departmentId = 'DP670434';
-        $staffIdToFind = 'STAFF705069';
+        $staffIdToFind = JWTAuth::user()->staff_id;
+
+        $token = $request->bearerToken();
+        JWTAuth::setToken($token);
+        $payload = JWTAuth::getPayload();
+        $role = $payload->get('role');
+
+       
         $organization = Organization::first();
-        $assign_role_name = DepartmentAssignStaff::select('assign_role_name')->where('department_id', $departmentId)->where('staff_id', $staffIdToFind)->first();
-        // $organization_name = $organization->org_name;
+      
         $user = User::with('userDetails')->where('staff_id', $staffIdToFind)->first();
-        // dd($assign_role_name);
+        
         if ($user) {
             $personalInfo = [
                 'F_name' => $user->F_name,
@@ -69,7 +75,7 @@ class PersonalInfoController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'assignRole' => $assign_role_name->assign_role_name,
+            'assignRole' => $role,
             'personalInfo' => $personalInfo,
             'ippisInfo' => $ippisInfo,
             'Image' => $base64Image,
