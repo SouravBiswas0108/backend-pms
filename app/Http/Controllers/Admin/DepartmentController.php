@@ -7,6 +7,7 @@ use App\Models\Department;
 use App\Models\DepartmentAssignStaff;
 use App\Models\Organization;
 use App\Models\User;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -53,7 +54,7 @@ class DepartmentController extends Controller
         $resp = '';
 
 
-        $validator = \Validator::make(
+        $validator = Validator::make(
             $request->all(),
             [
                 'dept_id' => 'required',
@@ -307,7 +308,7 @@ class DepartmentController extends Controller
         } else {
             $year = date('Y');
         }
-        $department = Department::where('department_id',$departmentId)->first();
+        $department = Department::where('department_id', $departmentId)->first();
         // dd($department);
         $departmentstafflists = DepartmentAssignStaff::where('department_id', $departmentId)->where('year', $year)->get()->toArray();
 
@@ -325,7 +326,7 @@ class DepartmentController extends Controller
 
         if (isset($departmentstafflists) && !empty($departmentstafflists)) {
             // $org_code = $objUser->org_code;
-          
+
             if (($departmentstafflists != '') || ($departmentstafflists != null)) {
 
                 foreach ($departmentstafflists as $key => $value) {
@@ -341,16 +342,130 @@ class DepartmentController extends Controller
                     }
                     if ($value['assign_role_name'] == 'Supervisor') {
                         # code...
-                        $supervisor_id[] = $value['department_id'];
+                        $supervisor_id[] = $value['staff_id'];
                     }
                 }
             }
 
-          
+
         }
 
-        return view('admin.department.assignUserRole', compact('department','data','supervisor_id','officer_id'));
+        return view('admin.department.assignUserRole', compact('department', 'data', 'supervisor_id', 'officer_id'));
 
         // dd($departmentstafflists);
+    }
+
+    public function assignUserstore(Request $request)
+    {
+        if (session()->has('year2')) {
+            $year = session('year2');
+            //dd($year);
+        } else {
+            $year = date('Y');
+        }
+
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'supervisor_name' => 'required',
+                'officer_name' => 'required',
+            ]
+        );
+        if ($validator->fails()) {
+            $messages = $validator->getMessageBag();
+
+            return to_route('admin.departments.index')->with('error', $messages->first());
+        }
+
+        $oldSupervisorIds = [];
+        $newSupervisorIds = $request->supervisor_name;
+
+        $departmentId = $request->dept_id;
+        $oldSupervisorLists = DepartmentAssignStaff::where('department_id', $departmentId)->where('assign_role_name', 'Supervisor')->where('year', '2024')->get()->toArray();
+
+        foreach ($oldSupervisorLists as $key => $supervisorList) {
+            # code...
+            $oldSupervisorIds[] = $supervisorList['staff_id'];
+        }
+
+        $demotedSupervisors = array_diff($oldSupervisorIds, $newSupervisorIds);
+        $promotedSupervisors = array_diff($newSupervisorIds, $oldSupervisorIds);
+
+        if ($demotedSupervisors) {
+            # code...
+            $oldSupervisor = DepartmentAssignStaff::whereIn('staff_id', $demotedSupervisors)->where('year', '2024')->update(['assign_role_name' => 'Staff']);
+        }
+
+        if ($promotedSupervisors) {
+            # code...
+            $newSupervisor = DepartmentAssignStaff::whereIn('staff_id', $promotedSupervisors)->where('year', '2024')->update(['assign_role_name' => 'Supervisor']);
+
+        }
+
+        return to_route('admin.departments.index')->with('success', __('Department Updated Successfully!'));
+
+    }
+
+    public function assignStaff(string $id)
+    {
+
+        $departmentId = decrypt($id);
+        // dd($departmentId);
+        if (session()->has('year2')) {
+            $year = session('year2');
+            //dd($year);
+        } else {
+            $year = date('Y');
+        }
+        $department = Department::where('department_id', $departmentId)->first();
+        // dd($department);
+        $departmentstafflists = DepartmentAssignStaff::where('department_id', $departmentId)->where('year', $year)->get()->toArray();
+
+
+        $collectionStaff = collect($departmentstafflists);
+        $officer = $collectionStaff->firstWhere('assign_role_name', 'Officer');
+        $officer_id = $officer['staff_id'] ?? null;
+
+        $supervisor_id = [];
+
+        $data = [];
+        // $departmentstafflist = [];
+        $objUser = Auth::user();
+        // dd($officer_id);
+
+        if (isset($departmentstafflists) && !empty($departmentstafflists)) {
+            // $org_code = $objUser->org_code;
+
+            if (($departmentstafflists != '') || ($departmentstafflists != null)) {
+
+                foreach ($departmentstafflists as $key => $value) {
+
+                    $userstaff = User::with('userDetails')->where('staff_id', $value['staff_id'])->first();
+                    if (isset($userstaff) && !empty($userstaff)) {
+                        $fname = ($userstaff['F_name'] != "") ? $userstaff['F_name'] . ' ' : '';
+                        $mid_name = ($userstaff['M_name'] != "") ? $userstaff['M_name'] . ' ' : '';
+                        $lname = ($userstaff['L_name'] != "") ? $userstaff['L_name'] . ' ' : '';
+
+                        $staff_name = $fname . $mid_name . $lname;
+                        $data['stafflist'][$value['staff_id']] = $fname . $mid_name . $lname;
+                    }
+                    if ($value['assign_role_name'] == 'Supervisor') {
+                        # code...
+                        $supervisor_id[] = $value['staff_id'];
+                    }
+                }
+            }
+
+
+        }
+
+        return view('admin.department.assignStaff', compact('department', 'data', 'supervisor_id', 'officer_id'));
+
+        // dd($departmentstafflists);
+    }
+
+    public function assignstaffstore()
+    {
+        dd(123);
     }
 }

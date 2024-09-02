@@ -44,13 +44,13 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-body">
-                        <form class="pl-3 pr-3" method="post" action="#">
+                        <form class="pl-3 pr-3" method="post" action="{{route('admin.assignuserstore')}}">
                             @csrf
                             <div class="row">
                                 <div class="col-6 form-group data-row">
                                     <label class="form-control-label" for="dept_name">{{ __('Department Name') }}</label>
                                     <input type="text" class="form-control dept_name" id="dept_name" name="dept_name" readonly value="{{$department['department_name']}}" required/>
-                                    <input type="hidden" class="form-control" id="dept_id" name="dept_id" value="{{$department['dept_id']}}" />
+                                    <input type="hidden" class="form-control" id="dept_id" name="dept_id" value="{{$department['department_id']}}" />
                                     <input type="hidden" class="form-control" id="dept_org_code" name="dept_org_code" value="{{$department['org_code']}}" />
                                 </div>
                                 <div class="col-6 form-group"></div>

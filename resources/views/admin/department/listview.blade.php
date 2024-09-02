@@ -84,7 +84,7 @@
                                                     class="btn btn-xs btn-white btn-icon-only width-auto edit-icon assign_staff"
                                                     data-url="" data-ajax-popup=""
                                                     data-title="{{__('Assign Staff Department')}}">Assign Officers</a>
-                                                <a href="#"
+                                                <a href="{{route('admin.assignStaff',encrypt($dept['department_id']))}}"
                                                     class="btn btn-xs btn-white btn-icon-only width-auto edit-icon assign_staff"
                                                     data-url="" data-ajax-popup=""
                                                     data-title="{{__('Assign Staff Department')}}">Assign Staff</a>
