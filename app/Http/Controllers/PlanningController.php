@@ -15,13 +15,14 @@ class PlanningController extends Controller
      */
     public function index()
     {
-        $departmentId = 'DP670434'; 
+        $departmentId = 'DP154120'; 
         $staffIdToFind = 'STAFF705069';
 
 
        $departmentName = Department::select('department_name')->where('department_id',$departmentId)->first();
-        $userInfo = DepartmentAssignStaff::where('department_id',$departmentId)->where('staff_id',$staffIdToFind)->first()->toArray();
-         
+    //    dd(123);
+       $userInfo = DepartmentAssignStaff::where('department_id',$departmentId)->where('staff_id',$staffIdToFind)->first();
+        //  dd($userInfo);
         $staffDetails =  User::with('userDetails')->where('staff_id',$userInfo['staff_id'])->get()->toArray();
        
         $supervisorDetails = User::with('userDetails')->where('staff_id',$userInfo['supervisor_id'])->get()->toArray();
@@ -46,6 +47,7 @@ class PlanningController extends Controller
         return response()->json([
             'status' => 'success',
             'formAIntial' => $formAIntial,
+            'competencies' => [],
         ]);
         
      

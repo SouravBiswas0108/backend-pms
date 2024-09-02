@@ -54,11 +54,11 @@
                                     <input type="hidden" class="form-control" id="dept_org_code" name="dept_org_code" value="{{$department['org_code']}}" />
                                 </div>
                                 <div class="col-6 form-group"></div>
-
+                               
                                 <div class="col-6 form-group data-row scrollbar_set">
                                     <label class="form-control-label" for="userlist">{{ __('Assign Supervisor') }}</label>
                                     <select id="form-control select2 disable_select" name="supervisor_name[]" class="form-control select2 disable_select" multiple="multiple">
-
+      
 
                                             @if(isset($data['stafflist']) && !empty($data['stafflist']))
                                             @foreach($data['stafflist'] as $key => $staff)
@@ -66,7 +66,7 @@
                                              if($key == $officer_id)
                                              continue;
                                             //  $show ='style="display:none;"';
-
+                                           
                                             @endphp
 
 

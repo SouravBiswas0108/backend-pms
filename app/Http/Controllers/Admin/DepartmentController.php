@@ -18,9 +18,15 @@ class DepartmentController extends Controller
      */
     public function index()
     {
+        if (session()->has('year2')) {
+            $year = session('year2');
+            //dd($year);
+        } else {
+            $year = date('Y');
+        }
         $department = Department::get()->toArray();
         // dd($department);
-        return view('admin.department.listview', compact('department'));
+        return view('admin.department.listview', compact('department', 'year'));
     }
 
     /**
@@ -163,17 +169,17 @@ class DepartmentController extends Controller
             // }
 
             if ($user->type == 'Admin') {
-                $department = Department::with('departmentAssignStaff')->where('department_id', '=', $dept_id)->where('year', $year)->first();
+                $department = Department::with('departmentAssignStaffs')->where('department_id', '=', $dept_id)->where('year', $year)->first();
 
             } else {
-                $department = Department::with('departmentAssignStaff')->where('department_id', '=', $dept_id)->first();
+                $department = Department::with('departmentAssignStaffs')->where('department_id', '=', $dept_id)->first();
             }
 
             // dd($data);
 
             return view('admin.department.viewlistuser', compact('user', 'department', 'data'));
         } else {
-            return redirect()->route('department')->with('error', __('Please Assign Staffs First!!'));
+            return redirect()->route('admin.departments.index')->with('error', __('Please Assign Staffs First!!'));
         }
     }
 
@@ -240,17 +246,17 @@ class DepartmentController extends Controller
             // }
 
             if ($user->type == 'Admin') {
-                $department = Department::with('departmentAssignStaff')->where('department_id', '=', $dept_id)->where('year', $year)->first();
+                $department = Department::with('departmentAssignStaffs')->where('department_id', '=', $dept_id)->where('year', $year)->first();
 
             } else {
-                $department = Department::with('departmentAssignStaff')->where('department_id', '=', $dept_id)->first();
+                $department = Department::with('departmentAssignStaffs')->where('department_id', '=', $dept_id)->first();
             }
 
             // dd($data);
 
             return view('admin.department.edit', compact('user', 'department', 'data', 'departmentlist'));
         } else {
-            return redirect()->route('department')->with('error', __('Please Assign Staffs First!!'));
+            return redirect()->route('admin.departments.index')->with('error', __('Please Assign Staffs First!!'));
         }
     }
 
@@ -371,6 +377,7 @@ class DepartmentController extends Controller
                 'officer_name' => 'required',
             ]
         );
+        // dd($request->all());
         if ($validator->fails()) {
             $messages = $validator->getMessageBag();
 
@@ -381,7 +388,26 @@ class DepartmentController extends Controller
         $newSupervisorIds = $request->supervisor_name;
 
         $departmentId = $request->dept_id;
-        $oldSupervisorLists = DepartmentAssignStaff::where('department_id', $departmentId)->where('assign_role_name', 'Supervisor')->where('year', '2024')->get()->toArray();
+
+        $oldOfficer = DepartmentAssignStaff::where('department_id', $departmentId)->where('assign_role_name', 'Officer')->where('year', $year)->first();
+
+        if (!$oldOfficer) {
+            # code...
+
+            $officer = DepartmentAssignStaff::where('department_id', $departmentId)->where('staff_id', $request->officer_name)->where('year', $year)->update(['assign_role_name' => 'Officer']);
+            $departmentOfficerUpdate = DepartmentAssignStaff::where('department_id', $departmentId)->where('year', $year)->update(['officer_id' => $request->officer_name]);
+        } elseif ($oldOfficer->staff_id != $request->officer_name) {
+
+            $assignationChange = DepartmentAssignStaff::where('department_id', $departmentId)->where('staff_id', $request->officer_name)->where('year', $year)->update(['supervisor_id' => null]);
+            $promotedOfficer = DepartmentAssignStaff::where('department_id', $departmentId)->where('staff_id', $request->officer_name)->where('year', $year)->update(['assign_role_name' => 'Officer']);
+            $demotedOfficer = DepartmentAssignStaff::where('department_id', $departmentId)->where('staff_id', $oldOfficer->staff_id)->where('year', $year)->update(['assign_role_name' => 'Staff']);
+            $departmentOfficerUpdate = DepartmentAssignStaff::where('department_id', $departmentId)->where('year', $year)->update(['officer_id' => $request->officer_name]);
+
+        }
+        // dd($oldOfficer);
+
+
+        $oldSupervisorLists = DepartmentAssignStaff::where('department_id', $departmentId)->where('assign_role_name', 'Supervisor')->where('year', $year)->get()->toArray();
 
         foreach ($oldSupervisorLists as $key => $supervisorList) {
             # code...
@@ -393,14 +419,17 @@ class DepartmentController extends Controller
 
         if ($demotedSupervisors) {
             # code...
-            $oldSupervisor = DepartmentAssignStaff::whereIn('staff_id', $demotedSupervisors)->where('year', '2024')->update(['assign_role_name' => 'Staff']);
+            $demotedSupervisorUpdate = DepartmentAssignStaff::where('department_id', $departmentId)->whereIn('supervisor_id', $demotedSupervisors)->where('year', $year)->update(['supervisor_id' => null]);
+            $oldSupervisor = DepartmentAssignStaff::where('department_id', $departmentId)->whereIn('staff_id', $demotedSupervisors)->where('year', $year)->update(['assign_role_name' => 'Staff']);
         }
 
         if ($promotedSupervisors) {
             # code...
-            $newSupervisor = DepartmentAssignStaff::whereIn('staff_id', $promotedSupervisors)->where('year', '2024')->update(['assign_role_name' => 'Supervisor']);
+            $newSupervisor = DepartmentAssignStaff::where('department_id', $departmentId)->whereIn('staff_id', $promotedSupervisors)->where('year', $year)->update(['assign_role_name' => 'Supervisor']);
 
         }
+
+        // dd($request->all());
 
         return to_route('admin.departments.index')->with('success', __('Department Updated Successfully!'));
 
@@ -431,7 +460,6 @@ class DepartmentController extends Controller
         $data = [];
         // $departmentstafflist = [];
         $objUser = Auth::user();
-        // dd($officer_id);
 
         if (isset($departmentstafflists) && !empty($departmentstafflists)) {
             // $org_code = $objUser->org_code;
@@ -458,14 +486,80 @@ class DepartmentController extends Controller
 
 
         }
+        // dd($data);
 
         return view('admin.department.assignStaff', compact('department', 'data', 'supervisor_id', 'officer_id'));
 
         // dd($departmentstafflists);
     }
 
-    public function assignstaffstore()
+    public function assignstaffstore(Request $request)
     {
-        dd(123);
+        if (session()->has('year2')) {
+            $year = session('year2');
+            //dd($year);
+        } else {
+            $year = date('Y');
+        }
+
+
+
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'supervisor_name' => 'required',
+                'Staffs' => 'required',
+            ]
+        );
+        if ($request->Staffs == null) {
+            # code...
+            $request->merge([
+                'Staffs' => $request->input('Staffs', []), // Ensure Staffs is an array
+            ]);
+        }
+
+
+        $officer_id = DepartmentAssignStaff::where('department_id', $request->dept_id)->where('supervisor_id', $request->supervisor_name)->where('year', $year)->first();
+        // dd($officer_id);
+        $oldStaffList = DepartmentAssignStaff::where('department_id', $request->dept_id)->where('supervisor_id', $request->supervisor_name)->where('year', $year)->get()->toArray();
+        $oldStaffs = [];
+        foreach ($oldStaffList as $key => $staff) {
+            # code...
+            $oldStaffs[] = $staff['staff_id'];
+        }
+
+        $newStaffs = $request->Staffs;
+
+        // dd($newStaffs);
+
+        $demotedStaff = array_diff($oldStaffs, $newStaffs);
+        $promotedStaff = array_diff($newStaffs, $oldStaffs);
+
+        if ($demotedStaff) {
+            # code...
+            $demoted = DepartmentAssignStaff::where('department_id', $request->dept_id)->where('supervisor_id', $request->supervisor_name)->where('year', $year)->whereIn('staff_id', $demotedStaff)->update(['supervisor_id' => null]);
+        }
+
+        if ($promotedStaff) {
+            # code...
+            $promoted = DepartmentAssignStaff::where('department_id', $request->dept_id)->where('year', $year)->whereIn('staff_id', $promotedStaff)->update(['supervisor_id' => $request->supervisor_name]);
+        }
+
+        return to_route('admin.departments.index')->with('success', __('Department Updated Successfully!'));
+    }
+
+    public function staffSelect($supervisor_id, $dept_id)
+    {
+        if (session()->has('year2')) {
+            $year = session('year2');
+            //dd($year);
+        } else {
+            $year = date('Y');
+        }
+        // $supervisorDetails = User::with('userDetails')->where('staff_id', $supervisor_id)->first();
+
+        $Staffs_info = DepartmentAssignStaff::with('user')->where('supervisor_id', $supervisor_id)->orWhere('supervisor_id', null)->where('year', $year)->where('department_id', $dept_id)->where('staff_id', '!=', $supervisor_id)->where('assign_role_name', '!=', 'Officer')->get();
+       
+        return response()->json($Staffs_info);
     }
 }

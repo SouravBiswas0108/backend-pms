@@ -41,6 +41,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/department/assignuserstore', [DepartmentController::class, 'assignuserstore'])->name('assignuserstore');
         Route::get('/department/assignstaff/{department}', [DepartmentController::class, 'assignStaff'])->name('assignStaff');
         Route::post('/department/assignstaffstore', [DepartmentController::class, 'assignstaffstore'])->name('assignstaffstore');
+        Route::get('/department/chooseStaff/{id}/{dept_id}',[DepartmentController::class,'staffSelect'])->name('staffSelect');
 
 
         Route::post('updateprofile', [UserController::class, 'updateProfile'])->name('updateProfile');

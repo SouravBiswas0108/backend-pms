@@ -212,7 +212,7 @@
         $('.supervisor_name').on('change', function () {
             var getSupId = $(this).val();
             // alert(getSupId)
-            var dept_id = {!! json_encode($department['dept_id']) !!};
+            var dept_id = {!! json_encode($department['department_id']) !!};
             if (getSupId) {
                 $.ajax({
                     url: '/admin/department/chooseStaff/' + getSupId + '/' + dept_id,
@@ -226,11 +226,15 @@
                             $('#Staffs').focus;
                             $.each(response, function (key, value) {
 
-                                if (value.assign_supervisor == getSupId) {
-                                    $('#Staffs').append('<option  value="' + value.staff_id + '" selected>' + value.staff_name + '</option>');
+                                if (value.supervisor_id == getSupId) {
+                                    let middleName = value.user.M_name ? value.user.M_name : '';
+                                    let fullName = value.user.F_name +" "+ middleName +" "+ value.user.L_name ;
+                                    $('#Staffs').append('<option  value="' + value.staff_id + '" selected>' + fullName + '</option>');
                                 }
                                 else {
-                                    $('#Staffs').append('<option  value="' + value.staff_id + '">' + value.staff_name + '</option>');
+                                    let middleName = value.user.M_name ? value.user.M_name : '';
+                                    let fullName = value.user.F_name +" "+ middleName +" "+ value.user.L_name ;
+                                    $('#Staffs').append('<option  value="' + value.staff_id + '">' + fullName + '</option>');
                                 }
                             });
                         } else {
