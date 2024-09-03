@@ -51,7 +51,7 @@ class AuthController extends Controller
             ->where('assign_role_name', $role)
             ->exists();
 
-      
+
 
         if ($exists) {
             // Create token with custom claims
