@@ -1130,46 +1130,46 @@ $('.year-filter').on('change', function() {
            });
 
         // Submit the form when the "Save" button is clicked
-    $("#finalFormSubBtn").on("click", function(e) {
-        e.preventDefault();
-        // alert("Dd");
-        // Create a FormData object to send the form data
-        var form = $("#finalForm");
-        var formData = new FormData(form[0]);
-        console.log(form.attr("action"));
-        // Submit the form with AJAX
-        $.ajax({
-            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-            type: form.attr("method"),
-            url: form.attr("action"),
-            data: formData,
-            processData: false, // Prevent jQuery from processing data
-            contentType: false, // Ensure the content type is set to false
-            success: function(response) {
-                // Check for success or error message in the JSON response
-                if(response.success == 1)
-                {
-                    window.location.href= baseUrl+"mpms_form";
-                }else if (response.errors) {
+    // $("#finalFormSubBtn").on("click", function(e) {
+    //     e.preventDefault();
+    //     // alert("Dd");
+    //     // Create a FormData object to send the form data
+    //     var form = $("#finalForm");
+    //     var formData = new FormData(form[0]);
+    //     console.log(form.attr("action"));
+    //     // Submit the form with AJAX
+    //     $.ajax({
+    //         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+    //         type: form.attr("method"),
+    //         url: form.attr("action"),
+    //         data: formData,
+    //         processData: false, // Prevent jQuery from processing data
+    //         contentType: false, // Ensure the content type is set to false
+    //         success: function(response) {
+    //             // Check for success or error message in the JSON response
+    //             if(response.success == 1)
+    //             {
+    //                 window.location.href= baseUrl+"mpms_form";
+    //             }else if (response.errors) {
 
-                    // console.log(response.errors);
-                    $.each(response.errors, function (key, value) {
-                        var formattedKey = key.replace('.', '[').replace(/\.|]$/g, ']');
-                        var index = formattedKey.charAt(11);
-                        let regex = new RegExp(`(objactives\\[${index}\\])`, "g");
-                        let modifiedString = formattedKey.replace(regex, "$1[") + "]";
+    //                 // console.log(response.errors);
+    //                 $.each(response.errors, function (key, value) {
+    //                     var formattedKey = key.replace('.', '[').replace(/\.|]$/g, ']');
+    //                     var index = formattedKey.charAt(11);
+    //                     let regex = new RegExp(`(objactives\\[${index}\\])`, "g");
+    //                     let modifiedString = formattedKey.replace(regex, "$1[") + "]";
 
 
-                       console.log(modifiedString);
+    //                    console.log(modifiedString);
 
-                        var field = form.find('[name="' + modifiedString + '"]');
-                        field.addClass('is-invalid'); // Add a class to highlight the field
-                        field.after('<span class="invalid-feedback">This field is required</span>');
-                    });
-                }
-            }
-        });
-    });
+    //                     var field = form.find('[name="' + modifiedString + '"]');
+    //                     field.addClass('is-invalid'); // Add a class to highlight the field
+    //                     field.after('<span class="invalid-feedback">This field is required</span>');
+    //                 });
+    //             }
+    //         }
+    //     });
+    // });
 
 
    $(window).on('load', function() {

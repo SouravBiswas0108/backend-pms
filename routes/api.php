@@ -37,6 +37,7 @@ Route::middleware('auth:api')->group(function () {
         Route::get('employeetask', [PlanningController::class, 'employeeTask'])->name('employeeTask');
     });
     
+    
 
     // Logout route
     Route::post('/logout', [AuthController::class, 'logout']);
