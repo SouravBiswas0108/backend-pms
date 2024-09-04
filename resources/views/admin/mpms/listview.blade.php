@@ -1,5 +1,6 @@
 @extends('admin.layouts.admin')
 
+
 @section('title')
 {{__('MPMS')}}
 @endsection
@@ -206,9 +207,10 @@
                                 </tr>
                             </thead>
                             <tbody>
-
+                        
                                 @if(count($data3) > 0)
                                     @foreach ($data3 as $dept)
+                                    
                                         <tr>
                                             <td style="color:black;">{{ $dept['kra_title'] }}</td>
                                             <td style="color:black;">{{ $dept['kra_weight'] }}</td>
@@ -221,12 +223,12 @@
                                             @if(Auth::user()->type != 'Client')
                                                 <td class="Action">
                                                     <span style="display: inline-block">
-                                                        <a href="{{ route('kra.edit', $dept->kra_id) }}" class="edit-icon "
+                                                        <a href="#" class="edit-icon "
                                                             data-url="" data-ajax-popup="" data-title="{{__('Edit Department')}}"><i
                                                                 class="fas fa-pencil-alt"></i></a>
                                                     </span>
                                                     <span style="display: inline-block">
-                                                        <a href="{{ route('kra.delete', $dept->id) }}" class="delete-icon "
+                                                        <a href="#" class="delete-icon "
                                                             data-url="" data-ajax-popup="" data-title="{{__('Edit Department')}}"><i
                                                                 class="fas fa-trash" style="color: #fdfdfd;"></i></a>
                                                     </span>

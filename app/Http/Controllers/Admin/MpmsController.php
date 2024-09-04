@@ -77,7 +77,7 @@ class MpmsController extends Controller
 
         $data3 = collect($data3_new)->map(function ($item) {
             return collect($item['kras'])->flatMap(function ($kra) use ($item) {
-                return collect($kra['objs'])->flatMap(function ($obj) use ($item, $kra) {
+                return collect($kra['objs'])->Map(function ($obj) use ($item, $kra) {
                     return [
                         'id' => $obj['id'],
                         'heading' => $item['heading'],
@@ -96,7 +96,7 @@ class MpmsController extends Controller
                 });
             });
         })->collapse()->all();
-
+    
         return view('admin.mpms.listview', compact("data1", "data2", "data3", 'year'));
 
     }
