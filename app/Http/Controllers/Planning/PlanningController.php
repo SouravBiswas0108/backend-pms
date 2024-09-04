@@ -8,17 +8,20 @@ use App\Models\DepartmentAssignStaff;
 use App\Models\Mpms;
 use App\Models\User;
 use Illuminate\Http\Request;
+use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
 class PlanningController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
 
-        $departmentId = 'DP154120';
-        $staffIdToFind = 'STAFF705069';
+        $departmentId = $request->departmentid;
+        // dd($departmentId);
+        
+        $staffIdToFind = JWTAuth::user()->staff_id;
 
 
         $departmentName = Department::select('department_name')->where('department_id', $departmentId)->first();

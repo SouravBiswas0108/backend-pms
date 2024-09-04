@@ -32,9 +32,11 @@ Route::middleware('auth:api')->group(function () {
 
     Route::resource('department', UserDepartmentController::class);
 
-    Route::resource('planning', PlanningController::class);
-    route::get('employeetask', [PlanningController::class, 'employeeTask'])->name('employeeTask');
-
+    Route::prefix('planning')->name('planning.')->group(function () {
+        Route::resource('/', PlanningController::class);
+        Route::get('employeetask', [PlanningController::class, 'employeeTask'])->name('employeeTask');
+    });
+    
 
     // Logout route
     Route::post('/logout', [AuthController::class, 'logout']);
