@@ -17,17 +17,25 @@ class PlanningController extends Controller
      */
     public function index(Request $request)
     {
+        if (session()->has('year2')) {
+            $year = session('year2');
+            //dd($year);
+        } else {
+            $year = date('Y');
+        }
+
 
         $departmentId = $request->departmentid;
         // dd($departmentId);
-        
+
         $staffIdToFind = JWTAuth::user()->staff_id;
+        // dd($staffIdToFind);
 
 
         $departmentName = Department::select('department_name')->where('department_id', $departmentId)->first();
         //    dd(123);
-        $userInfo = DepartmentAssignStaff::where('department_id', $departmentId)->where('staff_id', $staffIdToFind)->first();
-        //  dd($userInfo);
+        $userInfo = DepartmentAssignStaff::where('department_id', $departmentId)->where('staff_id', $staffIdToFind)->where('year', $year)->first();
+        // dd($userInfo);
         $staffDetails = User::with('userDetails')->where('staff_id', $userInfo['staff_id'])->get()->toArray();
 
         $supervisorDetails = User::with('userDetails')->where('staff_id', $userInfo['supervisor_id'])->get()->toArray();
@@ -43,16 +51,14 @@ class PlanningController extends Controller
 
         // Print or return the combined array
 
-        $employeeTasks = Mpms::with(['kras.objs'])->get()->toArray();
 
-        $formAIntial = [
-            'UserDetails' => $UserDetails,
-            'employeeTasks' => $employeeTasks,
-        ];
+        // $formAIntial = [
+        //     'UserDetails' => $UserDetails,
+
+        // ];
         return response()->json([
             'status' => 'success',
-            'formAIntial' => $formAIntial,
-            'competencies' => [],
+            'form-A-Intial' => $UserDetails,
         ]);
     }
 
@@ -108,12 +114,12 @@ class PlanningController extends Controller
     {
         $employeeTasks = Mpms::with(['kras.objs'])->get();
 
-   
-        $response  = $employeeTasks->map(function($task){
-            return[
+
+        $response = $employeeTasks->map(function ($task) {
+            return [
                 'heading' => $task->heading,
-                'kras' => $task->kras->map(function($kra){
-                     return[
+                'kras' => $task->kras->map(function ($kra) {
+                    return [
                         'kra_title' => $kra->kra_title,
                         'kra_weight' => $kra->kra_weight,
                         'objs' => $kra->objs->map(function ($obj) {
@@ -126,7 +132,7 @@ class PlanningController extends Controller
                                 'Responsible' => $obj->Responsible,
                             ];
                         }),
-                     ];
+                    ];
                 }),
             ];
         });
