@@ -7,6 +7,8 @@ use App\Models\DepartmentAssignStaff;
 use Illuminate\Http\Request;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
+use function PHPUnit\Framework\isEmpty;
+
 class UserDepartmentController extends Controller
 {
     /**
@@ -26,12 +28,22 @@ class UserDepartmentController extends Controller
             ->where('assign_role_name', $role)
             ->where('year',$request->year)
             ->get()
-            ->pluck('department.department_name');
+            ->pluck('department.department_name')->toArray();
 
-            return response()->json([
-                'status' => 'success',
-                'departmentNames' => $departmentNames,
-            ]);
+            if (!empty($departmentNames)) {
+                # code...
+                return response()->json([
+                    'status' => 'success',
+                    'departmentNames' => $departmentNames,
+                ]);
+            }
+            else {
+                # code...
+                return response()->json([
+                "message" => "Still not assign any department , please contact with admin !!",
+                ],404);
+            }
+            
         
         
 

@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Planning;
 use App\Http\Controllers\Controller;
 use App\Models\Department;
 use App\Models\DepartmentAssignStaff;
+use App\Models\EmployeeSubTask;
+use App\Models\EmployeeTask;
+use App\Models\Kra;
 use App\Models\Mpms;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -75,8 +78,74 @@ class PlanningController extends Controller
      */
     public function store(Request $request)
     {
-        dd($request->all());
-       return response()->json(["messege" => $request->all()]);
+
+        try {
+            //code...
+
+            $request->validate([
+                'dept_id' => 'required|string',
+                'year' => 'required|numeric',
+                'kras' => 'required|array',
+                'kras.*.kra_title' => 'required|string',
+                'kras.*.kra_weight' => 'required|numeric',
+                'kras.*.objs' => 'required|array',
+                'kras.*.objs.*.obj_title' => 'required|string',
+                'kras.*.objs.*.obj_weight' => 'required|numeric',
+                'kras.*.objs.*.gradeed_weight' => 'required|numeric',
+                'kras.*.objs.*.target' => 'required|numeric',
+                'kras.*.objs.*.kpi' => 'required|string',
+            ]);
+
+            $data = $request->all();
+
+
+            $year = $request->year;
+
+            $staffId = JWTAuth::user()->staff_id;
+            //    dd($data);
+            $kraName = [];
+
+            foreach ($data['kras'] as $key => $kra) {
+                # code...
+                $kraName[] = $kra['kra_title'];
+                $kraId = Kra::where('kra_title', $kra['kra_title'])->first()->id;
+                $check = EmployeeTask::where('staff_id', $staffId)->where('dept_id', $data['dept_id'])->where("kra_id", $kraId)->exists();
+
+                if (!$check) {
+                    $EmployeeTask = EmployeeTask::create([
+                        "staff_id" => $staffId,
+                        "dept_id" => $data['dept_id'],
+                        "year" => $year,
+                        "kra_id" => $kraId,
+                        "kra_weight" => $kra['kra_weight']
+                    ]);
+                    // dd($EmployeeTask);
+                    foreach ($kra["objs"] as $key => $obj) {
+                        # code...
+                        $employeeSubTask[] = [
+                            "employee_tasks_id" => $EmployeeTask->id,
+                            "objectives" => $obj['obj_title'],
+                            "objective_weight" => $obj['obj_weight'],
+                            "gradeed_weight" => $obj['gradeed_weight'],
+                            "target" => $obj['target'],
+                            "kpi" => $obj['kpi'],
+                            "unit" => $obj['unit'],
+                            "quater" => $obj['quater'],
+                        ];
+
+                    }
+                    $employeeSubTask = EmployeeSubTask::insert($employeeSubTask);
+                } else {
+                    $EmployeeTaskUpdate = EmployeeTask::where('staff_id', $staffId)->where('dept_id', $data['dept_id'])->where("kra_id", $kraId)->update(["kra_weight" => $kra['kra_weight']]);
+                    $EmployeeTaskUpdateId = EmployeeTask::where('staff_id', $staffId)->where('dept_id', $data['dept_id'])->where("kra_id", $kraId)->first()->id;
+                }
+                
+            }
+            dd($EmployeeTaskUpdateId);
+            return response()->json(["messege" => $request->all()]);
+        } catch (\Throwable $th) {
+            return $th->getMessage();
+        }
     }
 
     /**
