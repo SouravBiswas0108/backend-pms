@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -132,31 +133,61 @@ class AuthController extends Controller
             return $th->getMessage();
         }
     }
+    // public function logout(Request $request)
+    // {
+    //     // dd(767676);
+    //     try {
+    //         // Parse the token
+    //         $token = JWTAuth::getToken();
+    //         $user = JWTAuth::authenticate($token);
+
+    //         // Check your specific condition here
+    //         // For example, checking if the user is active or some other condition
+    //         if ($user->some_condition) {
+    //             // Invalidate the token
+    //             JWTAuth::invalidate($token);
+
+    //             return response()->json([
+    //                 'status' => 'success',
+    //                 'message' => 'Successfully logged out',
+    //             ]);
+    //         } else {
+    //             return response()->json([
+    //                 'status' => 'error',
+    //                 'message' => 'Condition not met for logout',
+    //             ], 400);
+    //         }
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => 'Failed to log out',
+    //             'error' => $e->getMessage(),
+    //         ], 500);
+    //     }
+    // }
+
     public function logout(Request $request)
     {
-        // dd(767676);
+
         try {
             // Parse the token
             $token = JWTAuth::getToken();
             $user = JWTAuth::authenticate($token);
-
-            // Check your specific condition here
-            // For example, checking if the user is active or some other condition
-            if ($user->some_condition) {
-                // Invalidate the token
-                JWTAuth::invalidate($token);
-
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'Successfully logged out',
-                ]);
-            } else {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Condition not met for logout',
-                ], 400);
-            }
+            
+            // Debugging: log user information
+            Log::info('User data:', ['user' => $user]);
+    
+            // Invalidate the token
+            JWTAuth::invalidate($token);
+    
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Successfully logged out',
+            ]);
         } catch (\Exception $e) {
+            // Debugging: log exception message
+            Log::error('Logout failed:', ['error' => $e->getMessage()]);
+    
             return response()->json([
                 'status' => 'error',
                 'message' => 'Failed to log out',
@@ -164,6 +195,7 @@ class AuthController extends Controller
             ], 500);
         }
     }
+
     // public function logout(Request $request)
     // {
     //     try {
