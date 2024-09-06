@@ -78,10 +78,8 @@ class PlanningController extends Controller
      */
     public function store(Request $request)
     {
-
         try {
-            //code...
-
+            // Validation
             $request->validate([
                 'dept_id' => 'required|string',
                 'year' => 'required|numeric',
@@ -96,22 +94,30 @@ class PlanningController extends Controller
                 'kras.*.objs.*.kpi' => 'required|string',
             ]);
 
+            // Retrieve data
             $data = $request->all();
-
-
             $year = $request->year;
-
             $staffId = JWTAuth::user()->staff_id;
-            //    dd($data);
+
             $kraName = [];
+            // $employeeSubTask = [];  // Initialize the array here
 
             foreach ($data['kras'] as $key => $kra) {
-                # code...
                 $kraName[] = $kra['kra_title'];
-                $kraId = Kra::where('kra_title', $kra['kra_title'])->first()->id;
-                $check = EmployeeTask::where('staff_id', $staffId)->where('dept_id', $data['dept_id'])->where("kra_id", $kraId)->exists();
 
-                if (!$check) {
+                // Find the KRA by title
+                $kraRecord = Kra::where('kra_title', $kra['kra_title'])->firstOrFail();
+                $kraId = $kraRecord->id;
+
+                // Check if EmployeeTask already exists
+                $exists = EmployeeTask::where('staff_id', $staffId)
+                    ->where('dept_id', $data['dept_id'])
+                    ->where("kra_id", $kraId)
+                    ->exists();
+
+                if (!$exists) {
+                    // Create EmployeeTask if it doesn't exist
+
                     $EmployeeTask = EmployeeTask::create([
                         "staff_id" => $staffId,
                         "dept_id" => $data['dept_id'],
@@ -119,9 +125,11 @@ class PlanningController extends Controller
                         "kra_id" => $kraId,
                         "kra_weight" => $kra['kra_weight']
                     ]);
-                    // dd($EmployeeTask);
+
+                    // Insert EmployeeSubTask
+                    $employeeSubTask = [];
+
                     foreach ($kra["objs"] as $key => $obj) {
-                        # code...
                         $employeeSubTask[] = [
                             "employee_tasks_id" => $EmployeeTask->id,
                             "objectives" => $obj['obj_title'],
@@ -132,21 +140,47 @@ class PlanningController extends Controller
                             "unit" => $obj['unit'],
                             "quater" => $obj['quater'],
                         ];
-
                     }
-                    $employeeSubTask = EmployeeSubTask::insert($employeeSubTask);
+                    // Bulk insert EmployeeSubTask records
+                    EmployeeSubTask::insert($employeeSubTask);
                 } else {
-                    $EmployeeTaskUpdate = EmployeeTask::where('staff_id', $staffId)->where('dept_id', $data['dept_id'])->where("kra_id", $kraId)->update(["kra_weight" => $kra['kra_weight']]);
-                    $EmployeeTaskUpdateId = EmployeeTask::where('staff_id', $staffId)->where('dept_id', $data['dept_id'])->where("kra_id", $kraId)->first()->id;
+                    // dd(123);
+                    // Update EmployeeTask if it already exists
+                    $EmployeeTaskUpdate = EmployeeTask::where('staff_id', $staffId)
+                        ->where('dept_id', $data['dept_id'])
+                        ->where("kra_id", $kraId)
+                        ->update(["kra_weight" => $kra['kra_weight']]);
+
+                    // Get the EmployeeTask ID for further use
+                    $EmployeeTaskUpdateId = EmployeeTask::where('staff_id', $staffId)
+                        ->where('dept_id', $data['dept_id'])
+                        ->where("kra_id", $kraId)
+                        ->first()->id;
+
+                    // Optionally: Update EmployeeSubTask if necessary (you can decide based on business logic)
+                    foreach ($kra["objs"] as $key => $obj) {
+                        EmployeeSubTask::updateOrCreate(
+                            ["employee_tasks_id" => $EmployeeTaskUpdateId, "objectives" => $obj['obj_title']],
+                            [
+                                "objective_weight" => $obj['obj_weight'],
+                                "gradeed_weight" => $obj['gradeed_weight'],
+                                "target" => $obj['target'],
+                                "kpi" => $obj['kpi'],
+                                "unit" => $obj['unit'],
+                                "quater" => $obj['quater'],
+                            ]
+                        );
+                    }
                 }
-                
             }
-            dd($EmployeeTaskUpdateId);
-            return response()->json(["messege" => $request->all()]);
+
+            return response()->json(["message" => "Tasks created/updated successfully"]);
         } catch (\Throwable $th) {
-            return $th->getMessage();
+            // Log the error if necessary
+            return response()->json(['error' => $th->getMessage()], 404);
         }
     }
+
 
     /**
      * Display the specified resource.
