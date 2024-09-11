@@ -96,7 +96,7 @@ class MpmsController extends Controller
                 });
             });
         })->collapse()->all();
-    
+
         return view('admin.mpms.listview', compact("data1", "data2", "data3", 'year'));
 
     }
@@ -106,6 +106,7 @@ class MpmsController extends Controller
      */
     public function create()
     {
+        // dd(123);
         return view('admin.mpms.create');
     }
 
@@ -131,7 +132,40 @@ class MpmsController extends Controller
         $mpms_id = $data['form_name'];
 
         if (isset($data['kra_id'])) {
-            dd("This is under Working");
+            $update = Kra::where('id', $data['kra_id'])->update([
+                "kra_title" => $data['kra_title'],
+                "kra_weight" => $data['kra_weight'],
+                "mpms_id" => $data['form_name'],
+                "year" => $year
+            ]);
+            $datas = Kra::with('objs')->where('id', $data['kra_id'])->get()->toArray();
+            $heading = Mpms::where('id', $datas[0]['mpms_id'])->first();
+            $id = $data['kra_id'];
+            //     $mpms_id = $datas[0]['mpms_id'];
+            //    dd($datas);
+
+            $data = collect($datas)->map(function ($item) use ($heading) {
+                return collect($item['objs'])->map(function ($obj) use ($item, $heading) {
+                    return [
+                        'id' => $obj['id'],
+                        'heading' => $heading->heading, // You may need to replace or remove this if not relevant
+                        'point' => $item['kra_weight'],
+                        'kra_title' => $item['kra_title'],
+                        'kra_weight' => $item['kra_weight'],
+                        'mpms_tables_id' => $item['mpms_id'],
+                        'obj_title' => $obj['obj_title'],
+                        'obj_weight' => (string) $obj['obj_weight'], // Convert to string
+                        'Initiative' => $obj['Initiative'],
+                        'kpi' => $obj['kpi'],
+                        'target' => (string) $obj['target'], // Convert to string
+                        'Responsible' => $obj['Responsible'],
+                        'kra_id' => $obj['kra_id'],
+                    ];
+                })->toArray();
+            })->flatten(1)->toArray();
+            $status = "update";
+            return view('admin.mpms.final', compact('id', 'mpms_id', 'status', 'data'));
+
         } else {
 
             $kra = Kra::create([
@@ -153,6 +187,7 @@ class MpmsController extends Controller
     public function finalStore(Request $request)
     {
         $data = $request->all();
+        // dd($data);
 
         if (session()->has('year2')) {
             $year = session('year2');
@@ -179,20 +214,42 @@ class MpmsController extends Controller
         $mpms_id = $data['mpms_id'];
 
         // dd($request->objactives);
-        foreach ($request->objactives as $key => $objective) {
+        if ($data['flag'] == "edit") {
             # code...
-            Obj::create([
-             "obj_title" => $objective['obj_title'],
-             "obj_weight" => $objective['obj_weight'],
-             "Initiative" => $objective['initiative'],
-             "kpi" => $objective['kpi'],
-             "target" => $objective['target'],
-             "Responsible" => $objective['responsible'],
-             "kra_id" => $kra_id,
-             "mpms_id" => $mpms_id,
+            foreach ($request->objactives as $key => $objective) {
+                Obj::updateOrCreate(
+                    ["id" => $objective['id'] ?? null],
+                    [
+                        "obj_title" => $objective['obj_title'],
+                        "obj_weight" => $objective['obj_weight'],
+                        "Initiative" => $objective['initiative'],
+                        "kpi" => $objective['kpi'],
+                        "target" => $objective['target'],
+                        "Responsible" => $objective['responsible'],
+                        "kra_id" => $kra_id,
+                        "mpms_id" => $mpms_id,
+                    ]
+                );
+            }
 
-            ]);
+        } else {
+
+            foreach ($request->objactives as $key => $objective) {
+                # code...
+                Obj::create([
+                    "obj_title" => $objective['obj_title'],
+                    "obj_weight" => $objective['obj_weight'],
+                    "Initiative" => $objective['initiative'],
+                    "kpi" => $objective['kpi'],
+                    "target" => $objective['target'],
+                    "Responsible" => $objective['responsible'],
+                    "kra_id" => $kra_id,
+                    "mpms_id" => $mpms_id,
+
+                ]);
+            }
         }
+
         return to_route('admin.mpms.index');
     }
 
@@ -210,6 +267,43 @@ class MpmsController extends Controller
     public function edit(string $id)
     {
         //
+        // dd($id);
+        if (session()->has('year2')) {
+            $year = session('year2');
+        } else {
+            $year = date('Y');
+        }
+        // $data = Mpms::whereHas('kras',function($query) use ($id){
+        //     $query->where('id',$id);
+        // })->with(['kras.objs'])->get()->toArray();
+
+        $datas = Kra::with('objs')->where('id', $id)->get()->toArray();
+        $heading = Mpms::where('id', $datas[0]['mpms_id'])->first();
+
+        $data = collect($datas)->map(function ($item) use ($heading) {
+            return collect($item['objs'])->map(function ($obj) use ($item, $heading) {
+                return [
+                    'id' => $obj['id'],
+                    'heading' => $heading->heading, // You may need to replace or remove this if not relevant
+                    'point' => $item['kra_weight'],
+                    'kra_title' => $item['kra_title'],
+                    'kra_weight' => $item['kra_weight'],
+                    'mpms_tables_id' => $item['mpms_id'],
+                    'obj_title' => $obj['obj_title'],
+                    'obj_weight' => (string) $obj['obj_weight'], // Convert to string
+                    'Initiative' => $obj['Initiative'],
+                    'kpi' => $obj['kpi'],
+                    'target' => (string) $obj['target'], // Convert to string
+                    'Responsible' => $obj['Responsible'],
+                    'kra_id' => $obj['kra_id'],
+                ];
+            })->toArray();
+        })->flatten(1)->toArray();
+
+        // dd($data);
+        $flag = 1;
+
+        return view('admin.mpms.create', compact('data', 'year', 'flag'));
     }
 
     /**
@@ -226,5 +320,7 @@ class MpmsController extends Controller
     public function destroy(string $id)
     {
         //
+        $deletedItem = Obj::where('id',$id)->delete();
+        return redirect()->back();
     }
 }

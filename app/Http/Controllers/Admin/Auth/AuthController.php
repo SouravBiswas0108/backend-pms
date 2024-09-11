@@ -53,7 +53,16 @@ class AuthController extends Controller
         }
     }
 
+ 
+     public function logOut(Request $request){
+        // dd(123);
+        Auth::logout();
+        $request->session()->invalidate();
 
+        $request->session()->regenerateToken();
+
+        return to_route('admin.login')->with('status', 'You have been logged out successfully.');
+     }
     /**
      * Store a newly created resource in storage.
      */

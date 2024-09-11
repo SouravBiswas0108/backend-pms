@@ -63,8 +63,9 @@
 <div class="row d-flex justify-content-end">
     <div class="col-xl-2 col-lg-3 col-md-4 col-sm-12 col-12">
         <div class="all-button-box">
-            <a href="{{ route('admin.mpms.create') }}" data-url="" data-ajax-popup="true" data-size="lg" data-title="{{__('Create Department')}}"
-                class="btn btn-xs btn-white btn-icon-only width-auto"><i class="fas fa-plus"></i> {{__('ADD')}} </a>
+            <a href="{{ route('admin.mpms.create') }}" data-url="" data-ajax-popup="true" data-size="lg"
+                data-title="{{__('Create Department')}}" class="btn btn-xs btn-white btn-icon-only width-auto"><i
+                    class="fas fa-plus"></i> {{__('ADD')}} </a>
         </div>
     </div>
 </div>
@@ -112,14 +113,26 @@
                                             @if(Auth::user()->type != 'Client')
                                                 <td class="Action">
                                                     <span style="display: inline-block">
-                                                        <a href="#" class="edit-icon " data-url="" data-ajax-popup=""
-                                                            data-title="{{__('Edit Department')}}"><i
+                                                        <a href="{{ route('admin.mpms.edit', $dept['kra_id']) }}" class="edit-icon "
+                                                            data-url="" data-ajax-popup="" data-title="{{__('Edit Department')}}"><i
                                                                 class="fas fa-pencil-alt"></i></a>
                                                     </span>
                                                     <span style="display: inline-block">
-                                                        <a href="#" class="delete-icon " data-url="" data-ajax-popup=""
-                                                            data-title="{{__('Edit Department')}}"><i class="fas fa-trash"
-                                                                style="color: #fdfdfd;"></i></a>
+                                                        <form id="delete-form-{{ $dept['id'] }}"
+                                                            action="{{ route('admin.mpms.destroy', $dept['id']) }}" method="POST"
+                                                            style="display: none;">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                        </form>
+
+                                                        <a href="#" class="delete-icon"
+                                                            onclick="event.preventDefault();document.getElementById('delete-form-{{ $dept['id'] }}').submit();"
+                                                            title="{{ __('Delete Department') }}">
+                                                            <i class="fas fa-trash" style="color: #fdfdfd;"></i>
+                                                        </a>
+
+
+
                                                     </span>
                                                 </td>
                                             @endif
@@ -164,20 +177,20 @@
                                             <td style="color:black;">{{ $dept['kpi'] }}</td>
                                             <td style="color:black;">{{ $dept['target'] }}</td>
                                             <td style="color:black;">{{ $dept['Responsible'] }}</td>
-                                            @if(Auth::user()->type != 'Client')
-                                                <td class="Action">
-                                                    <span style="display: inline-block">
-                                                        <a href="#" class="edit-icon " data-url="" data-ajax-popup=""
-                                                            data-title="{{__('Edit Department')}}"><i
-                                                                class="fas fa-pencil-alt"></i></a>
-                                                    </span>
-                                                    <span style="display: inline-block">
-                                                        <a href="#" class="delete-icon " data-url="" data-ajax-popup=""
-                                                            data-title="{{__('Edit Department')}}"><i class="fas fa-trash"
-                                                                style="color: #fdfdfd;"></i></a>
-                                                    </span>
-                                                </td>
-                                            @endif
+
+                                            <td class="Action">
+                                                <span style="display: inline-block">
+                                                    <a href="{{ route('admin.mpms.edit', $dept['kra_id']) }}" class="edit-icon "
+                                                        data-url="" data-ajax-popup="" data-title="{{__('Edit Department')}}"><i
+                                                            class="fas fa-pencil-alt"></i></a>
+                                                </span>
+                                                <span style="display: inline-block">
+                                                    <a href="#" class="delete-icon " data-url="" data-ajax-popup=""
+                                                        data-title="{{__('Edit Department')}}"><i class="fas fa-trash"
+                                                            style="color: #fdfdfd;"></i></a>
+                                                </span>
+                                            </td>
+
                                         </tr>
                                     @endforeach
                                 @else
@@ -207,10 +220,10 @@
                                 </tr>
                             </thead>
                             <tbody>
-                        
+
                                 @if(count($data3) > 0)
                                     @foreach ($data3 as $dept)
-                                    
+
                                         <tr>
                                             <td style="color:black;">{{ $dept['kra_title'] }}</td>
                                             <td style="color:black;">{{ $dept['kra_weight'] }}</td>
@@ -220,20 +233,21 @@
                                             <td style="color:black;">{{ $dept['kpi'] }}</td>
                                             <td style="color:black;">{{ $dept['target'] }}</td>
                                             <td style="color:black;">{{ $dept['Responsible'] }}</td>
-                                            @if(Auth::user()->type != 'Client')
-                                                <td class="Action">
-                                                    <span style="display: inline-block">
-                                                        <a href="#" class="edit-icon "
-                                                            data-url="" data-ajax-popup="" data-title="{{__('Edit Department')}}"><i
-                                                                class="fas fa-pencil-alt"></i></a>
-                                                    </span>
-                                                    <span style="display: inline-block">
-                                                        <a href="#" class="delete-icon "
-                                                            data-url="" data-ajax-popup="" data-title="{{__('Edit Department')}}"><i
-                                                                class="fas fa-trash" style="color: #fdfdfd;"></i></a>
-                                                    </span>
-                                                </td>
-                                            @endif
+
+                                            <td class="Action">
+                                                <span style="display: inline-block">
+                                                    <a href="{{ route('admin.mpms.edit', $dept['kra_id']) }}" class="edit-icon "
+                                                        data-url="" data-ajax-popup="" data-title="{{__('Edit Department')}}"><i
+                                                            class="fas fa-pencil-alt"></i></a>
+                                                </span>
+                                                <span style="display: inline-block">
+                                                    <a href="{{route('admin.mpms.destroy', $dept['kra_id'])}}"
+                                                        class="delete-icon " data-url="" data-ajax-popup=""
+                                                        data-title="{{__('Edit Department')}}"><i class="fas fa-trash"
+                                                            style="color: #fdfdfd;"></i></a>
+                                                </span>
+                                            </td>
+
                                         </tr>
                                     @endforeach
                                 @else

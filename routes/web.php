@@ -28,6 +28,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Login Routes
     Route::get('login', [AuthController::class, 'login'])->name('login');
     Route::post('loginsubmit', [AuthController::class, 'loginSubmit'])->name('loginsubmit');
+    Route::post('logout', [AuthController::class, 'logOut'])->name('logout');
+
 
     //admin Dashboard
     Route::middleware(['CheckAuth'])->group(function () {
@@ -49,9 +51,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('updateprofile', [UserController::class, 'updateProfile'])->name('updateProfile');
         Route::post('userpassword', [UserController::class, 'userpassword'])->name('userPassword');
 
-        Route::prefix('mpms')->name('mpms.')->group(function () {
-            Route::resource('/', MpmsController::class);
-            Route::post('/finalstore',[MpmsController::class,'finalStore'])->name('finalStore');
-        });
+        Route::resource('mpms', MpmsController::class);
+        Route::post('mpms/finalstore',[MpmsController::class,'finalStore'])->name('mpms.finalStore');
+
+        // Route::prefix('mpms')->name('mpms.')->group(function () {
+        //     Route::resource('/', MpmsController::class);
+        //     Route::post('/finalstore',[MpmsController::class,'finalStore'])->name('finalStore');
+        // });
     });
 });

@@ -153,12 +153,17 @@ if ($user->type == 'Admin') {
                     @endif
                 @endif
                 <li class="nav-item">
-                    <a href="{{ route('admin.dashboard') }}" class="nav-link dropdown-item"
-                        onclick="event.preventDefault();document.getElementById('logout-form').submit();">
+                    <a href="#" class="nav-link dropdown-item"
+                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                         <i class="fas fa-sign-out-alt"></i>
-                        <span>{{__('Logout')}}</span>
+                        <span>{{ __('Logout') }}</span>
                     </a>
                 </li>
+
+                <form id="logout-form" action="{{ route('admin.logout') }}" method="POST" style="display: none;">
+                    @csrf
+                </form>
+
             </ul>
         </div>
     </div>
