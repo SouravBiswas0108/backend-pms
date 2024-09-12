@@ -28,7 +28,8 @@ class UserDepartmentController extends Controller
             ->where('assign_role_name', $role)
             ->where('year',$request->year)
             ->get()
-            ->pluck('department.department_name')->toArray();
+            ->pluck('department.department_name','department.department_id')->toArray();
+            // dd($departmentNames);
 
             if (!empty($departmentNames)) {
                 # code...
