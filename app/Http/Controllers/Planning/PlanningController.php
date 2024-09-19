@@ -223,23 +223,33 @@ class PlanningController extends Controller
             return [
                 'heading' => $task->heading,
                 'kras' => $task->kras->map(function ($kra) {
+                    // Group objs by obj_title
+                    $groupedObjs = [];
+                    $kra->objs->each(function ($obj) use (&$groupedObjs) {
+                        // Check if obj_title already exists in the array
+                        if (isset($groupedObjs[$obj->obj_title])) {
+                            // Append kpi and target to the existing obj_title entry
+                            $groupedObjs[$obj->obj_title]['kpi'][] = $obj->kpi;
+                            $groupedObjs[$obj->obj_title]['target'][] = $obj->target;
+                        } else {
+                            // Create a new entry for obj_title
+                            $groupedObjs[$obj->obj_title] = [
+                                'obj_title' => $obj->obj_title,
+                                'kpi' => [$obj->kpi], // Initialize as an array
+                                'target' => [$obj->target], // Initialize target as an array
+                            ];
+                        }
+                    });
+        
                     return [
                         'kra_title' => $kra->kra_title,
-                        'kra_weight' => $kra->kra_weight,
-                        'objs' => $kra->objs->map(function ($obj) {
-                            return [
-                                'obj_title' => $obj->obj_title,
-                                'obj_weight' => $obj->obj_weight,
-                                'Initiative' => $obj->Initiative,
-                                'kpi' => $obj->kpi,
-                                'target' => $obj->target,
-                                'Responsible' => $obj->Responsible,
-                            ];
-                        }),
+                        'objs' => array_values($groupedObjs), // Convert associative array to indexed array
                     ];
                 }),
             ];
         });
+        
+        
 
         return response()->json([
             'status' => 'success',
