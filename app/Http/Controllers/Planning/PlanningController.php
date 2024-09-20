@@ -242,12 +242,14 @@ class PlanningController extends Controller
                     });
         
                     return [
+                        'kra_id' => $kra->id, // Add kra_id here
                         'kra_title' => $kra->kra_title,
                         'objs' => array_values($groupedObjs), // Convert associative array to indexed array
                     ];
                 }),
             ];
         });
+        
         
         
 
