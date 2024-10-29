@@ -26,16 +26,19 @@ class UserDepartmentController extends Controller
         $departmentNames = DepartmentAssignStaff::with('department')
             ->where('staff_id', $staffIdToFind)
             ->where('assign_role_name', $role)
-            ->where('year',$request->year)
             ->get()
-            ->pluck('department.department_name','department.department_id')->toArray();
+            ->pluck('year','department.department_name','department.department_id')->toArray();
             // dd($departmentNames);
 
             if (!empty($departmentNames)) {
                 # code...
+                $groupedDepartments = [];
+                foreach ($departmentNames as $department => $year) {
+                    $groupedDepartments[$year][] = $department;
+                }
                 return response()->json([
                     'status' => 'success',
-                    'departmentNames' => $departmentNames,
+                    'departmentNames' => $groupedDepartments,
                 ]);
             }
             else {
