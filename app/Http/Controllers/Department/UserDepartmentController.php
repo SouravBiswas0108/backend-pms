@@ -30,10 +30,13 @@ class UserDepartmentController extends Controller
             ->pluck('year','department.department_name','department.department_id')->toArray();
             // dd($departmentNames);
 
+            $currentYear = (int) date("Y");
+            // dd($currentYear);
+            
             if (!empty($departmentNames)) {
                 # code...
                 $groupedDepartments = [];
-                $years = range(2021, 2024);
+                $years = range(2021, $currentYear);
                 foreach ($departmentNames as $department => $year) {
                     $groupedDepartments[$year][] = $department;
                 }
@@ -43,7 +46,7 @@ class UserDepartmentController extends Controller
                     }
                 }
 
-                ksort($groupedDepartments);
+                krsort($groupedDepartments);
                 return response()->json([
                     'departmentNames' => $groupedDepartments,
                 ]);
