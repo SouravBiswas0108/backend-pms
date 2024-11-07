@@ -45,7 +45,6 @@ class UserDepartmentController extends Controller
 
                 ksort($groupedDepartments);
                 return response()->json([
-                    'status' => 'success',
                     'departmentNames' => $groupedDepartments,
                 ]);
             }
