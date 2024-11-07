@@ -33,9 +33,17 @@ class UserDepartmentController extends Controller
             if (!empty($departmentNames)) {
                 # code...
                 $groupedDepartments = [];
+                $years = range(2021, 2024);
                 foreach ($departmentNames as $department => $year) {
                     $groupedDepartments[$year][] = $department;
                 }
+                foreach ($years as $year) {
+                    if (!isset($groupedDepartments[$year])) {
+                        $groupedDepartments[$year] = [];
+                    }
+                }
+
+                ksort($groupedDepartments);
                 return response()->json([
                     'status' => 'success',
                     'departmentNames' => $groupedDepartments,

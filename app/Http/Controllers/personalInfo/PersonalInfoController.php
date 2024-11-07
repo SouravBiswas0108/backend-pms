@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\DepartmentAssignStaff;
 use App\Models\Organization;
 use App\Models\User;
+use App\Models\UserDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Hash;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
 
@@ -98,7 +100,39 @@ class PersonalInfoController extends Controller
      */
     public function store(Request $request)
     {
-        dd($request->all());
+       
+        $staffIdToFind = JWTAuth::user()->staff_id;
+
+        $mail =User::where('staff_id',$staffIdToFind)->first();
+       
+
+        if (($staffIdToFind == $request->staff_id) && ($mail->email == $request->email) ) {
+            # code...
+          
+            $toUpdate = User::where('staff_id',$staffIdToFind)->update([
+               'F_name' => $request->F_name,
+               'M_name' => $request->M_name,
+               'L_name' => $request->L_name,
+               'password' => Hash::make($request->new_password)
+            ]);
+
+            $recoveyEmailUpdate = UserDetail::where('staff_id',$staffIdToFind)->update([
+                'recovery_email' => $request->recovery_email
+            ]);
+
+            return response()->json([
+                'status' => 'success',
+                'messege' => "data updated succesfully"
+            ]);
+        }
+        // dd($recovery_mail);
+        else {
+            # code...
+            return response()->json([
+                "message" => "unable to update",
+                ],404);
+        }
+
     }
 
     /**
@@ -115,6 +149,7 @@ class PersonalInfoController extends Controller
     public function edit(string $id)
     {
         //
+        // dd(1234);
     }
 
     /**
@@ -123,6 +158,7 @@ class PersonalInfoController extends Controller
     public function update(Request $request, string $id)
     {
         //
+        dd($id);
     }
 
     /**
