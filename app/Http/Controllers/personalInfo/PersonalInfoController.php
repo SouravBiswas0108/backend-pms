@@ -119,8 +119,6 @@ class PersonalInfoController extends Controller
                 'L_name' => 'nullable|string|max:255',
                 'email' => 'required|string|email|max:255',              
                 'recovery_email' => 'nullable|string|email|max:255',
-                'new_password' => 'required|string|min:6',
-                'confirm_password' => 'required|string|min:6|same:new_password',  
                 'file' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',           
             ]);
         } catch (ValidationException $e) {
@@ -164,7 +162,6 @@ class PersonalInfoController extends Controller
                'F_name' => $request->F_name,
                'M_name' => $request->M_name,
                'L_name' => $request->L_name,
-               'password' => Hash::make($request->new_password),
                'avatar' => $fileName
             ]);
 
