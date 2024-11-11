@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 class PersonalInfoController extends Controller
 {
@@ -63,26 +65,33 @@ class PersonalInfoController extends Controller
         }
 
 
-        // Path to the image
-        $imagePath = public_path('assets/profileimage/profile.png');
+          $primaryImage = $user->avatar;  
+          $imagePath = public_path('profileimage/' . $primaryImage);
 
-        // Check if the file exists
-        if (File::exists($imagePath)) {
-            // Get the image content
-            $imageContent = File::get($imagePath);
+            // Check if the file exists
+           if (File::exists($imagePath)) {
+               // Get the image content
+               $imageContent = File::get($imagePath);
+    
+               // Encode the image to Base64
+               $base64Image = base64_encode($imageContent);
 
-            // Encode the image to Base64
-            $base64Image = base64_encode($imageContent);
-        } else {
-            $base64Image = null; // Or some default image or error message
-        }
+               // Optionally, add data URL prefix (useful if embedding image in HTML or sending it as a response)
+               $base64ImageWithPrefix = 'data:image/jpeg;base64,' . $base64Image;
+
+               // dd($base64ImageWithPrefix); // Use this to inspect the base64-encoded image if needed
+           } else {
+               $base64Image = null;  // Or you can set a default image here, or return an error message
+         // $base64ImageWithPrefix = 'data:image/png;base64,' . base64_encode(File::get(public_path('profileimage/default.png'))); // Set a default image
+          }
+
 
         return response()->json([
             'status' => 'success',
             'assignRole' => $role,
-            'personalInfo' => $personalInfo,
+            // 'personalInfo' => $personalInfo,
             'ippisInfo' => $ippisInfo,
-            'Image' => $base64Image,
+            // 'Image' => $base64Image,
         ]);
         // dd($secondArray);
     }
@@ -100,7 +109,49 @@ class PersonalInfoController extends Controller
      */
     public function store(Request $request)
     {
-       
+        // dd($request->all());
+        try {
+            // Validate the request data
+            $validatedData = $request->validate([
+                'staff_id' => 'required|string|max:20',
+                'F_name' => 'required|string|max:255',
+                'M_name' => 'nullable|string|max:255',
+                'L_name' => 'nullable|string|max:255',
+                'email' => 'required|string|email|max:255',              
+                'recovery_email' => 'nullable|string|email|max:255',
+                'new_password' => 'required|string|min:6',
+                'confirm_password' => 'required|string|min:6|same:new_password',  
+                'file' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',           
+            ]);
+        } catch (ValidationException $e) {
+            // Return a JSON response if validation fails
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation failed',
+                'errors' => $e->errors(),
+            ], 422);
+        }
+
+        // Check if a file is uploaded
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            
+            // Create a file name with time prefix to avoid overwriting
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            
+            // Move the file to the public/profileimage folder
+            $filePath = public_path('profileimage') . DIRECTORY_SEPARATOR . $fileName;
+            
+            // Move the uploaded file to the desired directory
+            $file->move(public_path('profileimage'), $fileName);
+    
+            // Set the file path to save in the database or return as a response
+            $validatedData['avatar'] = 'profileimage/' . $fileName;
+        }
+
+    // dd($fileName);
+
+
         $staffIdToFind = JWTAuth::user()->staff_id;
 
         $mail =User::where('staff_id',$staffIdToFind)->first();
@@ -113,7 +164,8 @@ class PersonalInfoController extends Controller
                'F_name' => $request->F_name,
                'M_name' => $request->M_name,
                'L_name' => $request->L_name,
-               'password' => Hash::make($request->new_password)
+               'password' => Hash::make($request->new_password),
+               'avatar' => $fileName
             ]);
 
             $recoveyEmailUpdate = UserDetail::where('staff_id',$staffIdToFind)->update([

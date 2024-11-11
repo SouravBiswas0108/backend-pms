@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\File;
 
 class AuthController extends Controller
 {
@@ -55,6 +56,27 @@ class AuthController extends Controller
 
 
         if ($exists) {
+
+            $primaryImage = $user->avatar;  
+            $imagePath = public_path('profileimage/' . $primaryImage);
+  
+              // Check if the file exists
+             if (File::exists($imagePath)) {
+                 // Get the image content
+                 $imageContent = File::get($imagePath);
+      
+                 // Encode the image to Base64
+                 $base64Image = base64_encode($imageContent);
+  
+                 // Optionally, add data URL prefix (useful if embedding image in HTML or sending it as a response)
+                 $base64ImageWithPrefix = 'data:image/jpeg;base64,' . $base64Image;
+  
+                 // dd($base64ImageWithPrefix); // Use this to inspect the base64-encoded image if needed
+             } else {
+                 $base64Image = null;  // Or you can set a default image here, or return an error message
+           // $base64ImageWithPrefix = 'data:image/png;base64,' . base64_encode(File::get(public_path('profileimage/default.png'))); // Set a default image
+            }
+            // dd($base64Image);
             // Create token with custom claims
             // $customClaims = ['role' => $role];
             // $token = JWTAuth::claims($customClaims)->attempt($credentials);
@@ -62,6 +84,7 @@ class AuthController extends Controller
             return response()->json([
                 'status' => 'success',
                 'user' => $user,
+                'image' => $base64Image,
                 'authorisation' => [
                     'token' => $token,
                     'type' => 'bearer',
