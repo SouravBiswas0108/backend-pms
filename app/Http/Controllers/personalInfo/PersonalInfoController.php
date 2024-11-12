@@ -217,4 +217,45 @@ class PersonalInfoController extends Controller
     {
         //
     }
+
+    public function security(Request $request)
+    {
+        //
+        try {
+            // Validate the request data
+            $validatedData = $request->validate([
+                'password' => 'required|string',
+                'newPassword' => 'required|string',
+                'confirmPassword' => 'required|string|same:newPassword',          
+            ]);
+        } catch (ValidationException $e) {
+            // Return a JSON response if validation fails
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation failed',
+                'errors' => $e->errors(),
+            ], 422);
+        }
+        
+        $user = JWTAuth::user();
+        
+        if (!Hash::check($request->password, $user->password)) {
+            # code...
+            return response()->json([
+                'status' => 'error',
+                'message' => 'The current password is incorrect'
+            ], 403);
+        }
+        // dd($request->all());
+
+        // Password is correct; proceed with updating to the new password
+        $user->password = Hash::make($request->newPassword);
+        $user->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Password updated successfully'
+          ]);
+        
+    }
 }

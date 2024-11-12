@@ -29,6 +29,7 @@ Route::middleware('auth:api')->group(function () {
 
     // Route::resource('employeetask', EmployeeSubTaskController::class);
     Route::resource('personalinfo', PersonalInfoController::class);
+    Route::post('security',[PersonalInfoController::class,'security'])->name('security');
 
     Route::resource('department', UserDepartmentController::class);
 
