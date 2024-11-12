@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\personalInfo;
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Controller;
 use App\Models\DepartmentAssignStaff;
 use App\Models\Organization;
@@ -251,6 +252,10 @@ class PersonalInfoController extends Controller
         // Password is correct; proceed with updating to the new password
         $user->password = Hash::make($request->newPassword);
         $user->save();
+
+
+        $authController = new AuthController();
+        $authController->logout($request);
 
         return response()->json([
             'status' => 'success',
