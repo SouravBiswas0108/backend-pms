@@ -65,7 +65,7 @@ class AuthController extends Controller
                  // Get the image content
                  $imageContent = File::get($imagePath);
 
-                 $profileImageUrl = asset($imagePath);// sending without encrypt
+                 $profileImageUrl = $imagePath;// sending without encrypt
       
                  // Encode the image to Base64
                  $base64Image = base64_encode($imageContent);
