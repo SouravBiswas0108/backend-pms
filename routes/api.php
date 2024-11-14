@@ -44,5 +44,9 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 });
 
+Route::get('/test', function () {
+    dd(123);
+});
+
 
 

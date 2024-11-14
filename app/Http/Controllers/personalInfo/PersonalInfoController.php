@@ -131,6 +131,14 @@ class PersonalInfoController extends Controller
             ], 422);
         }
 
+        $staffIdToFind = JWTAuth::user()->staff_id;
+
+        $mail =User::where('staff_id',$staffIdToFind)->first();
+       
+
+        if (($staffIdToFind == $request->staff_id) && ($mail->email == $request->email) )
+     {
+
         // Check if a file is uploaded
         if ($request->hasFile('file')) {
             $file = $request->file('file');
@@ -146,24 +154,21 @@ class PersonalInfoController extends Controller
     
             // Set the file path to save in the database or return as a response
             $validatedData['avatar'] = 'profileimage/' . $fileName;
+
+            $toUpdateImage = User::where('staff_id',$staffIdToFind)->update([
+                'avatar' => $fileName
+             ]);
         }
 
     // dd($fileName);
 
 
-        $staffIdToFind = JWTAuth::user()->staff_id;
-
-        $mail =User::where('staff_id',$staffIdToFind)->first();
-       
-
-        if (($staffIdToFind == $request->staff_id) && ($mail->email == $request->email) ) {
             # code...
           
             $toUpdate = User::where('staff_id',$staffIdToFind)->update([
                'F_name' => $request->F_name,
                'M_name' => $request->M_name,
                'L_name' => $request->L_name,
-               'avatar' => $fileName
             ]);
 
             $recoveyEmailUpdate = UserDetail::where('staff_id',$staffIdToFind)->update([
