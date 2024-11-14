@@ -75,6 +75,7 @@ class AuthController extends Controller
   
                  // dd($base64ImageWithPrefix); // Use this to inspect the base64-encoded image if needed
              } else {
+                $profileImageUrl = null;// sending without encrypt
                  $base64Image = null;  // Or you can set a default image here, or return an error message
            // $base64ImageWithPrefix = 'data:image/png;base64,' . base64_encode(File::get(public_path('profileimage/default.png'))); // Set a default image
             }
