@@ -64,9 +64,11 @@ class AuthController extends Controller
              if (File::exists($imagePath)) {
                  // Get the image content
                  $imageContent = File::get($imagePath);
+
+                 $profileImageUrl = asset($imagePath);// sending without encrypt
       
                  // Encode the image to Base64
-                 $base64Image = md5($imageContent);
+                 $base64Image = base64_encode($imageContent);
   
                  // Optionally, add data URL prefix (useful if embedding image in HTML or sending it as a response)
                  $base64ImageWithPrefix = 'data:image/jpeg;base64,' . $base64Image;
@@ -84,7 +86,7 @@ class AuthController extends Controller
             return response()->json([
                 'status' => 'success',
                 'user' => array_merge($user->toArray(),[
-                    'ProfileImage' => $base64Image,
+                    'ProfileImage' => $profileImageUrl,
                 ]),
                
                 'authorisation' => [
