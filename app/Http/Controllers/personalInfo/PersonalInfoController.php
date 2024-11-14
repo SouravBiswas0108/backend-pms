@@ -119,7 +119,7 @@ class PersonalInfoController extends Controller
                 'M_name' => 'nullable|string|max:255',
                 'L_name' => 'nullable|string|max:255',
                 'email' => 'required|string|email|max:255',              
-                'recovery_email' => 'nullable|string|email|max:255',
+                'recovery_email' => 'nullable|email|max:255',
                 'file' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',           
             ]);
         } catch (ValidationException $e) {
