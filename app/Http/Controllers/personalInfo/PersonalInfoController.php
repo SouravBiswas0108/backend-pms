@@ -85,15 +85,33 @@ class PersonalInfoController extends Controller
                $base64Image = null;  // Or you can set a default image here, or return an error message
          // $base64ImageWithPrefix = 'data:image/png;base64,' . base64_encode(File::get(public_path('profileimage/default.png'))); // Set a default image
           }
+            
 
-
-        return response()->json([
-            'status' => 'success',
+          $responseContent = [
+        //    'status' => 'success',
             'assignRole' => $role,
-            // 'personalInfo' => $personalInfo,
+            'personalInfo' => $personalInfo,
             'ippisInfo' => $ippisInfo,
-            // 'Image' => $base64Image,
-        ]);
+          ];
+
+          //etag
+
+          $etag = md5(json_encode($responseContent));
+
+        //   if($request->header('If-None-Match') === $etag){
+        //     return response()->noContent(304);
+        //   }
+
+          return response()->json($responseContent)
+              ->header('Etag',$etag);
+
+        // return response()->json([
+        //     'status' => 'success',
+        //     'assignRole' => $role,
+        //     // 'personalInfo' => $personalInfo,
+        //     'ippisInfo' => $ippisInfo,
+        //     // 'Image' => $base64Image,
+        // ]);
         // dd($secondArray);
     }
 
