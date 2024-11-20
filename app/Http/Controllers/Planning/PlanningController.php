@@ -59,10 +59,16 @@ class PlanningController extends Controller
         //     'UserDetails' => $UserDetails,
 
         // ];
-        return response()->json([
-            'status' => 'success',
-            'form-A-Intial' => $UserDetails,
-        ]);
+
+        $etag = md5(json_encode($UserDetails));
+
+        return response()->json($UserDetails)
+              ->header('Etag',$etag);
+
+        // return response()->json([
+        //     'status' => 'success',
+        //     'form-A-Intial' => $UserDetails,
+        // ]);
     }
 
     /**
