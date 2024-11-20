@@ -63,7 +63,7 @@ class PlanningController extends Controller
         $etag = md5(json_encode($UserDetails));
 
         return response()->json($UserDetails)
-              ->header('Etag',$etag);
+              ->header('mahadev-etag',$etag);
 
         // return response()->json([
         //     'status' => 'success',
