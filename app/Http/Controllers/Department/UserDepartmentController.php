@@ -16,8 +16,10 @@ class UserDepartmentController extends Controller
      */
     public function index(Request $request)
     {
+        // dd($request->staff_id);
         // Fetch the current authenticated user's staff ID
-        $staffIdToFind = JWTAuth::user()->staff_id;
+        // $staffIdToFind = JWTAuth::user()->staff_id;
+        $staffIdToFind = $request->staff_id;
     
         // Get the Bearer token from the request
         $token = $request->bearerToken();
@@ -41,6 +43,7 @@ class UserDepartmentController extends Controller
             ->toArray();
         // Debugging output to check the fetched departments
         // dd($departmentNames);
+        
     
         // Fetching the current year
         $currentYear = (int) date("Y");
