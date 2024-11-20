@@ -16,10 +16,8 @@ class UserDepartmentController extends Controller
      */
     public function index(Request $request)
     {
-        // dd($request->staff_id);
         // Fetch the current authenticated user's staff ID
-        // $staffIdToFind = JWTAuth::user()->staff_id;
-        $staffIdToFind = $request->staff_id;
+        $staffIdToFind = JWTAuth::user()->staff_id;
     
         // Get the Bearer token from the request
         $token = $request->bearerToken();
