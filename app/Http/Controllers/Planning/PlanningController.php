@@ -64,10 +64,13 @@ class PlanningController extends Controller
 
         
         $etag = md5(json_encode($UserDetails));
+        $response = response()->json($UserDetails);
+        $response->header('mahadev-etag', $etag);
+        $response->header('Access-Control-Expose-Headers', 'mahadev-etag');
 
-        return response()->json($UserDetails)
-              ->header('mahadev-etag',$etag);
-
+        // return response()->json($UserDetails)
+        //       ->header('mahadev-etag',$etag);
+        return $response;
         // return response()->json([
         //     'status' => 'success',
         //     'form-A-Intial' => $UserDetails,
