@@ -41,13 +41,14 @@ class AuthController extends Controller
                 'message' => 'Unauthorized',
             ], 401);
         }
+        // dd(123);
 
         // Retrieve authenticated user
         $customClaims = ['role' => $role];
         $token = JWTAuth::setToken($token)->claims($customClaims)->attempt($credentials);
         $user = JWTAuth::setToken($token)->toUser();
 
-
+        
         // Check if the user has the required role in DepartmentAssignStaff
         $exists = DepartmentAssignStaff::where('staff_id', $user->staff_id)
             ->where('assign_role_name', $role)
@@ -59,9 +60,10 @@ class AuthController extends Controller
 
             $primaryImage = $user->avatar;  
             $imagePath = public_path('profileimage/' . $primaryImage);
-  
+
               // Check if the file exists
-             if (File::exists($imagePath)) {
+             if (is_file($imagePath)) {
+                // dd(File::exists($imagePath));
                  // Get the image content
                  $imageContent = File::get($imagePath);
 

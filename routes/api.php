@@ -36,6 +36,7 @@ Route::middleware('auth:api')->group(function () {
     Route::prefix('planning')->name('planning.')->group(function () {
         Route::resource('/', PlanningController::class);
         Route::get('employeetask', [PlanningController::class, 'employeeTask'])->name('employeeTask');
+        Route::get('data',[PlanningController::class,'data'])->name('data');
     });
     
     

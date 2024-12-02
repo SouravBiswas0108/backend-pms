@@ -60,6 +60,9 @@ class PlanningController extends Controller
 
         // ];
 
+    
+
+        
         $etag = md5(json_encode($UserDetails));
 
         return response()->json($UserDetails)
@@ -194,6 +197,7 @@ class PlanningController extends Controller
     public function show(string $id)
     {
         //
+        dd(123);
     }
 
     /**
@@ -264,4 +268,53 @@ class PlanningController extends Controller
             'employeeTasks' => $response,
         ]);
     }
+
+
+    public function data(Request $request){
+
+        $departmentId = $request->departmentid;
+        $year = $request->year;
+        $quater = $request->quater;
+
+        $staffIdToFind = JWTAuth::user()->staff_id;
+        // dd($staffIdToFind);
+
+       $SubmittedEmployeeTask = EmployeeTask::with(['savedemployeetask','kraDetails.mpms'])->get()->toArray();
+    //   $employeeSubTask = EmployeeSubTask::get()->toArray();
+    // dd($SubmittedEmployeeTask);
+
+      $transformedResponse = collect($SubmittedEmployeeTask)
+    ->groupBy('dept_id')
+    ->map(function ($tasks, $dept_id) use ($year) {
+        return [
+            'dept_id' => $dept_id,
+            'year' => $year, // Assuming all tasks share the same year
+            'kras' => $tasks->map(function ($task) {
+                return [
+                    'kra_title' => $task['kra_details']['kra_title'],
+                    'kra_weight' => $task['kra_weight'],
+                    'objs' => collect($task['savedemployeetask'])->map(function ($savedTask) {
+                        return [
+                            'obj_title' => $savedTask['objectives'],
+                            'obj_weight' => $savedTask['objective_weight'],
+                            'gradeed_weight' => $savedTask['gradeed_weight'],
+                            'target' => $savedTask['target'],
+                            'kpi' => $savedTask['kpi'],
+                            'unit' => $savedTask['unit'],
+                            'quater' => $savedTask['quater'],
+                        ];
+                    }) // Reset the array keys for the objectives
+                ];
+            }) // Reset the array keys for the KRAs
+        ];
+    })->toArray(); // Reset the array keys and convert to an array
+
+  
+                   return response()->json(
+                       [ 'data' => $transformedResponse]
+                    );
+
+    //    dd($response);
+    }
+    
 }

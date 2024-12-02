@@ -20,4 +20,12 @@ class EmployeeSubTask extends Model
         'unit',                // Corresponds to unit
         'quater',              // Corresponds to quater
     ];
+
+     
+        public function employeetask()
+{
+    return $this->belongsTo(EmployeeTask::class, 'employee_tasks_id', 'id');
+}
+
+
 }

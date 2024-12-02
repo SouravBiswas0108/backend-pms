@@ -16,4 +16,17 @@ class EmployeeTask extends Model
         'kra_id',
         'kra_weight',
     ];
+
+    public function savedemployeetask()
+    {
+        return $this->hasMany(EmployeeSubTask::class, 'employee_tasks_id', 'id');
+    }
+    
+    public function kraDetails()
+   {
+        return $this->belongsTo(kra::class, 'kra_id', 'id');
+   }
+
+
+
 }
