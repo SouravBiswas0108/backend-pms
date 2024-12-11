@@ -7,7 +7,10 @@ use App\Http\Controllers\personalInfo\PersonalInfoController;
 // use App\Http\Controllers\Planning\PlanningController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Competencies\StaffCompetenciesController;
+use App\Http\Controllers\Department\SupervisorDepartmentController;
 use App\Http\Controllers\Planning\PlanningController;
+use App\Http\Controllers\Planning\SupervisorPlanningController;
 use App\Models\EmployeeSubTask;
 
 Route::controller(AuthController::class)->group(function () {
@@ -39,6 +42,17 @@ Route::middleware('auth:api')->group(function () {
         Route::get('data',[PlanningController::class,'data'])->name('data');
     });
     
+    Route::prefix('competencies')->name('competencies')->group(function (){
+     route::resource('/',StaffCompetenciesController::class);
+    });
+
+    Route::prefix('supervisor')->name('supervisor')->group(function (){
+      Route::resource('/',SupervisorDepartmentController::class);
+      Route::get('stafflist',[SupervisorDepartmentController::class,'stafflist'])->name('stafflist');
+
+      //planning or we can also call it form A controller for supervisor 
+      Route::resource('planning',SupervisorPlanningController::class);
+    });
     
 
     // Logout route
