@@ -19,4 +19,8 @@ class Competencies extends Model
         'quarter',
         'aggregate',
     ];
+
+    public function competenciesDetails(){
+         return $this->hasMany(CompetenciesDetails::class ,'competencies_id','id');
+    }
 }
