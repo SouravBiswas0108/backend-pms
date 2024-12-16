@@ -3,13 +3,12 @@
 namespace App\Http\Controllers\Competencies;
 
 use App\Http\Controllers\Controller;
-use App\Models\Competencies;
-use App\Models\CompetenciesDetails;
-use Hamcrest\Arrays\IsArray;
 use Illuminate\Http\Request;
+use App\Models\Competencies;
 use Illuminate\Validation\ValidationException;
+use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
-class StaffCompetenciesController extends Controller
+class SupervisorCompetenciesController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,15 +16,22 @@ class StaffCompetenciesController extends Controller
     public function index(Request $request)
     {
         //
-
         try {
             // Validate the request data
             $validatedData = $request->validate([
+                'supervisor_id' => 'required|string|max:20',
                 'staff_id' => 'required|string|max:20',
                 'dept_id' => 'required|string',
                 'year' => 'required|numeric',
                 'quarter' => 'required|numeric'
             ]);
+
+            $superviorId = JWTAuth::user()->staff_id;
+
+            if ($superviorId != $validatedData['supervisor_id']) {
+                # code...
+                return response()->json(["messege" => 'correct the supervisor credentials'],401);
+            }
 
             $data = Competencies::with('competenciesDetails')
             ->allCheck($validatedData['staff_id'],$validatedData['dept_id'],$validatedData['year'],$validatedData['quarter']);
@@ -48,7 +54,7 @@ class StaffCompetenciesController extends Controller
                 'errors' => $e->errors(),
             ], 422);
         }
-
+     
     }
 
     /**
@@ -65,53 +71,6 @@ class StaffCompetenciesController extends Controller
     public function store(Request $request)
     {
         //
-        $data = $request->all();
-        // dd($data);
-        // return response()->json($request->all());   
-
-        $competencies = $request->Competencies;
-
-        if (empty($competencies)) {
-            # code...
-            return response()->json([
-                "response" => "enter Competencies to run the api"
-            ], 404);
-        }
-
-        foreach ($competencies as $competenciey)
-         {
-            // dd($competenciey);
-            $answer = Competencies::updateOrCreate(
-                [
-                    'competencies' => $competenciey['name'],
-                    'staff_id' => $request->staff_id,
-                    'dept_id' => $request->dept_id,
-                    'year' => $request->year,
-                    'quarter' => $request->quarter,
-                ],[])->id;
-
-            foreach ($competenciey['details'] as $description) {
-                # code...
-                // dd($description);
-                $result = CompetenciesDetails::updateOrCreate([
-                     "competencies_id" => $answer,
-                     "title" => $description['title'],
-                ],[                  
-                    "describe_expectations" => $description['Describe_Expectations'],
-                    "min_score" => $description['min_score'],
-                    "max_score" => $description['max_score'],
-                ]);
-            }
-            // dd($answer);
-        }
-
-        //need to do the second part 
-        
-
-        return response()->json([
-            "response" => "data updated succesfully"
-        ]);
-        // dd($competencies);
     }
 
     /**

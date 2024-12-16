@@ -8,6 +8,7 @@ use App\Http\Controllers\personalInfo\PersonalInfoController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Competencies\StaffCompetenciesController;
+use App\Http\Controllers\Competencies\SupervisorCompetenciesController;
 use App\Http\Controllers\Department\SupervisorDepartmentController;
 use App\Http\Controllers\Planning\PlanningController;
 use App\Http\Controllers\Planning\SupervisorPlanningController;
@@ -52,6 +53,8 @@ Route::middleware('auth:api')->group(function () {
 
       //planning or we can also call it form A controller for supervisor 
       Route::resource('planning',SupervisorPlanningController::class);
+      
+      Route::resource('competencies',SupervisorCompetenciesController::class);
     });
     
 
