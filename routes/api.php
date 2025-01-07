@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminControllers\AuthController as AdminControllersAuthController;
 use App\Http\Controllers\Department\UserDepartmentController;
 use App\Http\Controllers\EmployeeSubTaskController;
 use App\Http\Controllers\personalInfo\PersonalInfoController;
@@ -21,6 +22,9 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('refresh', 'refresh');
 
 });
+
+// admin login api route
+  Route::post('admin/login',[AdminControllersAuthController::class,'login'])->name('adminlogin');
 
 // Route::resource('planning', PlanningController::class);
 
@@ -56,6 +60,13 @@ Route::middleware('auth:api')->group(function () {
       
       Route::resource('competencies',SupervisorCompetenciesController::class);
     });
+
+
+    Route::prefix('admin')->name('admin')->group(function(){
+      
+      Route::resource('/',AdminControllersAuthController::class);
+
+       });
     
 
     // Logout route
