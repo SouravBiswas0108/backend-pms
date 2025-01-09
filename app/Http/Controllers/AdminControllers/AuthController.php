@@ -40,13 +40,66 @@ class AuthController extends Controller
         }
         $user = JWTAuth::setToken($token)->toUser();
         $check = User::where('email', $user->email)->where('staff_id',$user['staff_id'])->where('designation','admin')->exists();
-          if($check){
+         
+        if($check){
 
-            return response()->json([
+             $response = [
                     'token' => $token,
                     'type' => 'bearer',
                 
-            ]);
+             ];
+            //  dd($response);
+
+             $user = JWTAuth::user()->toArray();
+             if (!empty($user)) {
+                # code...
+                $data = [
+                   "First Name"  => $user['F_name'] ?? null,
+                   "Middle Name" => $user['M_name'] ?? null,
+                   "Last Name"   => $user['L_name'] ?? null,
+                   "Email"       => $user['email'] ?? null,
+                ];
+    
+    
+                $user = User::with('userDetails')->where('staff_id',$user['staff_id'])->first();
+                $primaryImage = $user->avatar;  
+                $imagePath = public_path('profileimage/' . $primaryImage);
+    
+                $base64ImageWithPrefix = null;
+        
+                  // Check if the file exists
+                 if (File::exists($imagePath)) {
+                     // Get the image content
+                     $imageContent = File::get($imagePath);
+          
+                     // Encode the image to Base64
+                     $base64Image = base64_encode($imageContent);
+        
+                     // Optionally, add data URL prefix (useful if embedding image in HTML or sending it as a response)
+                     $base64ImageWithPrefix = 'data:image/jpeg;base64,' . $base64Image;
+        
+                     // dd($base64ImageWithPrefix); // Use this to inspect the base64-encoded image if needed
+                 } else {
+                     $base64Image = null;  // Or you can set a default image here, or return an error message
+               // $base64ImageWithPrefix = 'data:image/png;base64,' . base64_encode(File::get(public_path('profileimage/default.png'))); // Set a default image
+                }
+        
+                // $ans = array_push($data,"profileImage" => $base64ImageWithPrefix);
+                $data['profileImage'] = $base64ImageWithPrefix;
+    
+               return response()->json([
+                   'auth' => $response,
+                   'data' => $data,
+               ]);
+    
+                
+            }
+            else{
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'not found',
+                ], 404);
+               }
 
           }
           else{
@@ -71,6 +124,7 @@ class AuthController extends Controller
     public function index()
     {
         //
+        return response()->json(['message' => 'Right now not available'],404);
         $user = JWTAuth::user()->toArray();
 // dd($user);
         if (!empty($user)) {
