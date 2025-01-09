@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminControllers\AuthController as AdminControllersAuthController;
+use App\Http\Controllers\AdminControllers\StaffController;
 use App\Http\Controllers\Department\UserDepartmentController;
 use App\Http\Controllers\EmployeeSubTaskController;
 use App\Http\Controllers\personalInfo\PersonalInfoController;
@@ -63,8 +64,10 @@ Route::middleware('auth:api')->group(function () {
 
 
     Route::prefix('admin')->name('admin')->group(function(){
-      
+
       Route::resource('/',AdminControllersAuthController::class);
+
+      Route::resource('staff',StaffController::class);
 
        });
     

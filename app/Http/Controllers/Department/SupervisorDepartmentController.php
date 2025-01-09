@@ -29,7 +29,7 @@ class SupervisorDepartmentController extends Controller
                 'message' => 'Unauthorized',
             ], 401);
           }
-        // dd($request->year);
+        // dd($request->year); 
         $department = DepartmentAssignStaff::where('assign_role_name','Supervisor')->where('staff_id',$supervisorId)->where('year',$request->year)->get()->toArray();
         // dd($department);
         

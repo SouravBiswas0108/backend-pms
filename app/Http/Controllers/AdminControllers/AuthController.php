@@ -86,6 +86,8 @@ class AuthController extends Controller
             $user = User::with('userDetails')->where('staff_id',$user['staff_id'])->first();
             $primaryImage = $user->avatar;  
             $imagePath = public_path('profileimage/' . $primaryImage);
+
+            $base64ImageWithPrefix = null;
     
               // Check if the file exists
              if (File::exists($imagePath)) {
