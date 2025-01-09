@@ -54,9 +54,9 @@ class AuthController extends Controller
              if (!empty($user)) {
                 # code...
                 $data = [
-                   "First Name"  => $user['F_name'] ?? null,
-                   "Middle Name" => $user['M_name'] ?? null,
-                   "Last Name"   => $user['L_name'] ?? null,
+                   "First_Name"  => $user['F_name'] ?? null,
+                   "Middle_Name" => $user['M_name'] ?? null,
+                   "Last_Name"   => $user['L_name'] ?? null,
                    "Email"       => $user['email'] ?? null,
                 ];
     
