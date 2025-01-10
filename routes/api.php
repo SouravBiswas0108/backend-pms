@@ -17,15 +17,14 @@ use App\Http\Controllers\Planning\SupervisorPlanningController;
 use App\Models\EmployeeSubTask;
 
 Route::controller(AuthController::class)->group(function () {
-    Route::post('login', 'login')->name('auth');
-    Route::post('register', 'register');
-    // Route::post('logout', 'logout');
-    Route::post('refresh', 'refresh');
-
+  Route::post('login', 'login')->name('auth');
+  Route::post('register', 'register');
+  // Route::post('logout', 'logout');
+  Route::post('refresh', 'refresh');
 });
 
 // admin login api route
-  Route::post('admin/login',[AdminControllersAuthController::class,'login'])->name('adminlogin');
+Route::post('admin/login', [AdminControllersAuthController::class, 'login'])->name('adminlogin');
 
 // Route::resource('planning', PlanningController::class);
 
@@ -34,51 +33,48 @@ Route::controller(AuthController::class)->group(function () {
 // Route::middleware('auth:api')->post('/logout', [AuthController::class, 'logout']);
 
 Route::middleware('auth:api')->group(function () {
-    // Resource routes
+  // Resource routes
 
-    // Route::resource('employeetask', EmployeeSubTaskController::class);
-    Route::resource('personalinfo', PersonalInfoController::class);
-    Route::post('security',[PersonalInfoController::class,'security'])->name('security');
+  // Route::resource('employeetask', EmployeeSubTaskController::class);
+  Route::resource('personalinfo', PersonalInfoController::class);
+  Route::post('security', [PersonalInfoController::class, 'security'])->name('security');
 
-    Route::resource('department', UserDepartmentController::class);
+  Route::resource('department', UserDepartmentController::class);
 
-    Route::prefix('planning')->name('planning.')->group(function () {
-        Route::resource('/', PlanningController::class);
-        Route::get('employeetask', [PlanningController::class, 'employeeTask'])->name('employeeTask');
-        Route::get('data',[PlanningController::class,'data'])->name('data');
+  Route::prefix('planning')->name('planning.')->group(function () {
+    Route::resource('/', PlanningController::class);
+    Route::get('employeetask', [PlanningController::class, 'employeeTask'])->name('employeeTask');
+    Route::get('data', [PlanningController::class, 'data'])->name('data');
+  });
+
+  Route::prefix('competencies')->name('competencies')->group(function () {
+    route::resource('/', StaffCompetenciesController::class);
+  });
+
+  Route::prefix('supervisor')->name('supervisor')->group(function () {
+    Route::resource('/', SupervisorDepartmentController::class);
+    Route::get('stafflist', [SupervisorDepartmentController::class, 'stafflist'])->name('stafflist');
+
+    //planning or we can also call it form A controller for supervisor 
+    Route::resource('planning', SupervisorPlanningController::class);
+
+    Route::resource('competencies', SupervisorCompetenciesController::class);
+  });
+
+  // Route::middleware('role:admin')->group(function () {
+    Route::prefix('admin')->name('admin')->group(function () {
+
+      Route::resource('/', AdminControllersAuthController::class);
+
+      Route::resource('staff', StaffController::class);
     });
-    
-    Route::prefix('competencies')->name('competencies')->group(function (){
-     route::resource('/',StaffCompetenciesController::class);
-    });
-
-    Route::prefix('supervisor')->name('supervisor')->group(function (){
-      Route::resource('/',SupervisorDepartmentController::class);
-      Route::get('stafflist',[SupervisorDepartmentController::class,'stafflist'])->name('stafflist');
-
-      //planning or we can also call it form A controller for supervisor 
-      Route::resource('planning',SupervisorPlanningController::class);
-      
-      Route::resource('competencies',SupervisorCompetenciesController::class);
-    });
+  // });
 
 
-    Route::prefix('admin')->name('admin')->group(function(){
-
-      Route::resource('/',AdminControllersAuthController::class);
-
-      Route::resource('staff',StaffController::class);
-
-       });
-    
-
-    // Logout route
-    Route::post('/logout', [AuthController::class, 'logout']);
+  // Logout route
+  Route::post('/logout', [AuthController::class, 'logout']);
 });
 
 // Route::get('/test', function () {
 //     dd(123);
 // });
-
-
-

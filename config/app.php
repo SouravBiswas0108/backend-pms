@@ -169,6 +169,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class, // Add this line
+        // Spatie\Permission\PermissionServiceProvider::class, 
     ])->toArray(),
 
     /*
