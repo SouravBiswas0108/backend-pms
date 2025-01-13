@@ -126,7 +126,7 @@ class PlanningController extends Controller
                     ->where('dept_id', $data['dept_id'])
                     ->where("kra_id", $kraId)
                     ->exists();
-
+// dd($data['dept_id']);
                 if (!$exists) {
                     // Create EmployeeTask if it doesn't exist
 
@@ -282,7 +282,7 @@ class PlanningController extends Controller
         $staffIdToFind = JWTAuth::user()->staff_id;
         // dd($staffIdToFind);
 
-       $SubmittedEmployeeTask = EmployeeTask::with(['savedemployeetask','kraDetails.mpms'])->get()->toArray();
+       $SubmittedEmployeeTask = EmployeeTask::with(['savedemployeetask','kraDetails.mpms'])->where('dept_id',$departmentId)->where('staff_id',$staffIdToFind)->get()->toArray();
     //   $employeeSubTask = EmployeeSubTask::get()->toArray();
     // dd($SubmittedEmployeeTask);
 

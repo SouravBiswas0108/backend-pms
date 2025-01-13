@@ -124,7 +124,7 @@ class StaffController extends Controller
             return response()->json(['error' => $th->getMessage()], 404);
         }
 
-        dd($request->all());
+        // dd($request->all());
     }
 
     /**
