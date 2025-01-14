@@ -36,7 +36,8 @@ class User extends Authenticatable implements JWTSubject
         'date_of_MDA_posting',
         'date_of_last_promotion',
         'gender',
-        'grade_level'
+        'grade_level',
+        'is_admin'
     ];
 
     public function userDetails()
