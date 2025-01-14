@@ -167,9 +167,9 @@ class StaffController extends Controller
                 'staff_id' => 'required|string|unique:users,staff_id|max:255',
                 'ippis_no' => 'required|string|unique:users,ippis_no|max:255',
                 'email' => 'required|email|unique:users,email|max:255',
-                'f_Name' => 'required|string|max:255',
-                'm_Name' => 'nullable|string|max:255',
-                'l_Name' => 'required|string|max:255',
+                'F_Name' => 'required|string|max:255',
+                'M_Name' => 'nullable|string|max:255',
+                'L_Name' => 'required|string|max:255',
                 'phone' => 'required|string|max:15|regex:/^\d+$/',
                 'password' => 'required|string|min:4',
                 'job_Title' => 'required|string|max:255',
@@ -184,7 +184,6 @@ class StaffController extends Controller
                 'recovery_email' => 'required|email|max:255',
                 'grade_level' => 'required|string|max:255',
                 'permission' => 'required|array',
-                'permission.admin' => 'required|integer|in:0,1',
                 'permission.total_user' => 'required|integer|in:0,1',
                 'permission.total_department' => 'required|integer|in:0,1',
                 'permission.employee_performance_rating_by_grade_level' => 'required|integer|in:0,1',
@@ -198,14 +197,14 @@ class StaffController extends Controller
 
             // dd($validatedData);
 
-            
+
 
             $user =  User::create([
                 'ippis_no' => $validatedData['ippis_no'],
                 'staff_id' => $validatedData['staff_id'],
-                'F_name' => $validatedData['f_Name'],
-                'M_name' => $validatedData['m_Name'],
-                'L_name' => $validatedData['l_Name'],
+                'F_name' => $validatedData['F_Name'],
+                'M_name' => $validatedData['M_Name'],
+                'L_name' => $validatedData['L_Name'],
                 'email' => $validatedData['email'],
                 'phone' => $validatedData['phone'],
                 'password' => hash::make($validatedData['password']),
@@ -240,7 +239,6 @@ class StaffController extends Controller
             //spaty role permission
 
             $permissionRoles = [
-                'admin' => 'admin',
                 'total_user' => 'Total User',
                 'total_department' => 'Total Department',
                 'employee_performance_rating_by_grade_level' => 'Employee Performance Rating By Grade Level',

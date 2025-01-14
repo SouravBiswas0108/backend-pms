@@ -76,13 +76,23 @@ class AuthController extends Controller
                     'Report On Employees Percentage Distribution' => 'report_on_employees_percentage_distribution',
                 ];
                 
-                $dashboard_menu = array_filter($roles, function($dashboard, $role) use ($user) {
-                    return $user->hasRole($role);
-                }, ARRAY_FILTER_USE_BOTH);
+                $dashboard_menu = [];
                 
-                $dashboard_menu = array_values($dashboard_menu); // Reindex the array
-
+                if ($user->hasRole('admin')) {
+                    // If user is an admin, include all roles except 'admin'
+                    $dashboard_menu = array_values(array_filter($roles, function($role) {
+                        return $role !== 'admin';
+                    }));
+                } else {
+                    // Filter the roles based on the user's assigned roles
+                    $dashboard_menu = array_filter($roles, function($dashboard, $role) use ($user) {
+                        return $user->hasRole($role);
+                    }, ARRAY_FILTER_USE_BOTH);
+                    $dashboard_menu = array_values($dashboard_menu); // Reindex the array
+                }
+                
                 $data['dashboard_menu'] = $dashboard_menu;
+                
 
                 // dd($dashboard_menu);
     
