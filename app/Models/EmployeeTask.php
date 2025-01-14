@@ -13,6 +13,7 @@ class EmployeeTask extends Model
         'staff_id',
         'dept_id',
         'year',
+        'quater',
         'kra_id',
         'kra_weight',
     ];

@@ -95,6 +95,7 @@ class PlanningController extends Controller
             $request->validate([
                 'dept_id' => 'required|string',
                 'year' => 'required|numeric',
+                'quater' => 'required|numeric|in:1,2,3,4', // Main quarter validation
                 'kras' => 'required|array',
                 'kras.*.kra_title' => 'required|string',
                 'kras.*.kra_weight' => 'required|numeric',
@@ -104,6 +105,9 @@ class PlanningController extends Controller
                 'kras.*.objs.*.gradeed_weight' => 'required|numeric',
                 'kras.*.objs.*.target' => 'required|numeric',
                 'kras.*.objs.*.kpi' => 'required|string',
+                'kras.*.objs.*.quater' => 'required|numeric|in:1,2,3,4|same:quater', // Ensure same as root quater
+            ], [
+                'kras.*.objs.*.quater.same' => 'The quarter in the objectives must match the main quarter.',
             ]);
 
             // Retrieve data
@@ -124,9 +128,10 @@ class PlanningController extends Controller
                 // Check if EmployeeTask already exists
                 $exists = EmployeeTask::where('staff_id', $staffId)
                     ->where('dept_id', $data['dept_id'])
+                    ->where('year', $year)->where('quater', $data['quater'])
                     ->where("kra_id", $kraId)
                     ->exists();
-// dd($data['dept_id']);
+
                 if (!$exists) {
                     // Create EmployeeTask if it doesn't exist
 
@@ -134,6 +139,7 @@ class PlanningController extends Controller
                         "staff_id" => $staffId,
                         "dept_id" => $data['dept_id'],
                         "year" => $year,
+                        "quater" => $data['quater'],
                         "kra_id" => $kraId,
                         "kra_weight" => $kra['kra_weight']
                     ]);
@@ -160,12 +166,14 @@ class PlanningController extends Controller
                     // Update EmployeeTask if it already exists
                     $EmployeeTaskUpdate = EmployeeTask::where('staff_id', $staffId)
                         ->where('dept_id', $data['dept_id'])
+                        ->where('year', $year)->where('quater', $data['quater'])
                         ->where("kra_id", $kraId)
                         ->update(["kra_weight" => $kra['kra_weight']]);
 
                     // Get the EmployeeTask ID for further use
                     $EmployeeTaskUpdateId = EmployeeTask::where('staff_id', $staffId)
                         ->where('dept_id', $data['dept_id'])
+                        ->where('year', $year)->where('quater', $data['quater'])
                         ->where("kra_id", $kraId)
                         ->first()->id;
 
@@ -282,7 +290,7 @@ class PlanningController extends Controller
         $staffIdToFind = JWTAuth::user()->staff_id;
         // dd($staffIdToFind);
 
-       $SubmittedEmployeeTask = EmployeeTask::with(['savedemployeetask','kraDetails.mpms'])->where('dept_id',$departmentId)->where('staff_id',$staffIdToFind)->get()->toArray();
+       $SubmittedEmployeeTask = EmployeeTask::with(['savedemployeetask','kraDetails.mpms'])->where('dept_id',$departmentId)->where('year', $year)->where('quater',$quater)->where('staff_id',$staffIdToFind)->get()->toArray();
     //   $employeeSubTask = EmployeeSubTask::get()->toArray();
     // dd($SubmittedEmployeeTask);
 
