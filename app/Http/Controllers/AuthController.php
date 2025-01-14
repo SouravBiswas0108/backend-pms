@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\TestNotification;
 use App\Models\DepartmentAssignStaff;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -24,6 +25,11 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
+        // event(new TestNotification([
+        //     'author' => 'Admin',
+        //     'title' => 'Test Notification',
+        // ]));
+
         $request->validate([
             'email' => 'required|string|email',
             'password' => 'required|string',

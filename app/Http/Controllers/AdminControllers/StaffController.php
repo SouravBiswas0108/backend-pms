@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\AdminControllers;
 
+use App\Events\TestNotification;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\UserDetail;
@@ -116,6 +117,8 @@ class StaffController extends Controller
                 'created_by' => JWTAuth::user()->id,
                 'type' => $validatedData['role'],
             ]);
+
+            event(new TestNotification(['message' => 'New staff created']));
 
             return response()->json(['message' => 'Staff created successfully'], 201);
             // dd($request->all());
