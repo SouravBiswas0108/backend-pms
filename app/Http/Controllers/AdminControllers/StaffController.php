@@ -23,7 +23,7 @@ class StaffController extends Controller
     {
         // Get the authenticated user
         $user = JWTAuth::user();
-        if ($user->hasRole('admin')) {
+        if ($user->hasRole('admin') or $user->hasRole('Total User')) {
             # code...
             $stafflist = User::with('userDetails')->get()->toArray();
 
@@ -173,7 +173,7 @@ class StaffController extends Controller
                 'phone' => 'required|string|max:15|regex:/^\d+$/',
                 'password' => 'required|string|min:4',
                 'job_Title' => 'required|string|max:255',
-                'designation' => 'required|string|max:255',
+                'Designation' => 'required|string|max:255',
                 'cadre' => 'required|string|max:255',
                 'date_of_current_posting' => 'required|date_format:d/m/Y',
                 'date_of_MDA_posting' => 'required|date_format:d/m/Y',
@@ -208,7 +208,7 @@ class StaffController extends Controller
                 'email' => $validatedData['email'],
                 'phone' => $validatedData['phone'],
                 'password' => hash::make($validatedData['password']),
-                'designation' => $validatedData['designation'],
+                'designation' => $validatedData['Designation'],
                 'cadre' => $validatedData['cadre'],
                 'is_admin' => 1
                 // 'organization' => $validatedData['organization'],
@@ -222,7 +222,7 @@ class StaffController extends Controller
                 'staff_id' => 'STAFF352162',
                 'staff_id' => $validatedData['staff_id'],
                 'gender' => $validatedData['gender'],
-                'designation' => $validatedData['designation'],
+                'designation' => $validatedData['Designation'],
                 'cadre' => $validatedData['cadre'],
                 // 'org_code' => $validatedData['organization'],
                 // 'org_name' => $validatedData['organization'],
@@ -277,6 +277,59 @@ class StaffController extends Controller
     public function show(string $id)
     {
         //
+        if (!(JWTAuth::user()->hasRole('admin') or JWTAuth::user()->hasRole('Total User')) ) {
+
+            return response()->json(['message' => 'Unauthorized'], 401);
+            // dd('admin');
+            # code...
+        }
+
+        try {
+            // Validate the string $id
+            if (!is_string($id) || empty($id) || strlen($id) > 255) {
+                throw new ValidationException(validator(['id' => $id], [
+                    'id' => 'required|string|max:255',
+                ]));
+            }
+    
+            $data = User::with('userDetails')->where('staff_id', $id)->get()->toArray();
+
+            if (empty($data)) {
+                # code...
+                return response()->json(['message' => 'No staff found'], 404);
+            }
+
+            $result = collect($data)->map(function($item){
+                return [
+                    "staff_id" => $item['staff_id'],
+                    "ippis_no" => $item['ippis_no'],
+                    // "is_active" => $item['user_details']['is_active'],
+                    "F_name" => $item['F_name'],
+                    "M_name" => $item['M_name'],
+                    "L_name" => $item['L_name'],
+                    "email" => $item['email'],
+                    "phone" => $item['phone'],
+                    "job_title" => $item['user_details']['job_title'],
+                    "designation" => $item['user_details']['designation'],
+                    "cadre" => $item['user_details']['cadre'],
+                    "date_of_current_posting" => $item['user_details']['date_of_current_posting'],
+                    "date_of_MDA_posting" => $item['user_details']['date_of_MDA_posting'],
+                    "date_of_last_promotion" => $item['user_details']['date_of_last_promotion'],
+                    "gender" => $item['user_details']['gender'],
+                    "organization" => $item['user_details']['org_name'],
+                    "role" => $item['is_admin'] == 1 ? 'admin' : 'user',
+                    "recovery_email" => $item['user_details']['recovery_email'],
+                ];
+            });
+            // dd($result);
+            // Perform further actions using the validated id
+            return response()->json([ "data" => $result], 200);
+    
+        } catch (ValidationException $th) {
+            // Return a JSON response with validation errors
+            return response()->json(['errors' => $th->errors()], 422);
+        }
+        // dd($id);
     }
 
     /**
@@ -292,6 +345,47 @@ class StaffController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        if (!(JWTAuth::user()->hasRole('admin') or JWTAuth::user()->hasRole('Total User')) ) {
+
+            return response()->json(['message' => 'Unauthorized'], 401);
+            // dd('admin');
+            # code...
+        }
+
+
+        try {
+
+            $validatedData =  $request->validate([
+                'staff_id' => 'required|string|max:255',
+                'ippis_no' => 'required|string|max:255',
+                'email' => 'required|email|max:255',
+                'F_Name' => 'required|string|max:255',
+                'M_Name' => 'nullable|string|max:255',
+                'L_Name' => 'required|string|max:255',
+                'phone' => 'required|string|max:15',
+                'password' => 'required|string|min:4',
+                'job_Title' => 'required|string|max:255',
+                'Designation' => 'required|string|max:255',
+                'cadre' => 'required|string|max:255',
+                'date_of_current_posting' => 'required|date_format:d/m/Y',
+                'date_of_MDA_posting' => 'required|date_format:d/m/Y',
+                'date_of_last_promotion' => 'required|date_format:d/m/Y',
+                'gender' => 'required|in:male,female,other',
+                'organization' => 'required|string|max:255',
+                'role' => 'required|string|max:255',
+                'recovery_email' => 'required|email|max:255',
+                "grade_level" => 'required|string|max:255',
+            ]);
+
+            dd($request->all());
+        } catch (ValidationException $e) {
+            // Return all validation errors
+            return response()->json([
+                'errors' => $e->errors()
+            ], 422);
+        }
+
+        dd($id);
         //
     }
 
