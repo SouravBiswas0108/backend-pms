@@ -27,6 +27,8 @@ class StaffController extends Controller
             # code...
             $stafflist = User::with('userDetails')->get()->toArray();
 
+            // dd($stafflist);
+
             $data  = collect($stafflist)->map(function ($item) {
                 return [
                     "id" => $item['id'],
@@ -35,7 +37,7 @@ class StaffController extends Controller
                     "name" => $item['F_name'] . " " . $item['M_name'] . " " . $item['L_name'],
                     "email" => $item['email'],
                     "is_active" => $item['user_details']['is_active'],
-                    "type" => "user",
+                    "type" => $item['is_admin']? 'admin' : 'user',
                     "grade_level" => $item['user_details']['grade_level'],
                 ];
             });
