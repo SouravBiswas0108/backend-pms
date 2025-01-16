@@ -120,7 +120,6 @@ class StaffController extends Controller
             // dd(auth::user()->id);
 
             $userDetails =  UserDetail::create([
-                'staff_id' => 'STAFF352162',
                 'staff_id' => $validatedData['staff_id'],
                 'gender' => $validatedData['gender'],
                 'designation' => $validatedData['Designation'],
@@ -219,7 +218,6 @@ class StaffController extends Controller
             // dd(auth::user()->id);
 
             $userDetails =  UserDetail::create([
-                'staff_id' => 'STAFF352162',
                 'staff_id' => $validatedData['staff_id'],
                 'gender' => $validatedData['gender'],
                 'designation' => $validatedData['Designation'],
@@ -352,6 +350,12 @@ class StaffController extends Controller
             # code...
         }
 
+        if ($request->input('role') == 'admin' || $request->input('role') == 'Admin') {
+            # code...
+
+            return $this->updateAdmin($request);
+            // dd('admin');
+        }
 
         try {
 
@@ -377,16 +381,30 @@ class StaffController extends Controller
                 "grade_level" => 'required|string|max:255',
             ]);
 
-            dd($request->all());
+            if ($id != $validatedData['staff_id']) {
+                return response()->json(['message' => 'Unauthorized'], 401);              
+            }
+            $user = User::updateUser($id,$validatedData);
+
+            if ($user) {
+                $userDetails = UserDetail::updateUserDetails($id, $validatedData, $request);
+                return response()->json(['message' => 'User updated successfully.']);
+            } else {
+                return response()->json(['message' => 'User update failed.'], 400);
+            }
+
         } catch (ValidationException $e) {
             // Return all validation errors
             return response()->json([
                 'errors' => $e->errors()
             ], 422);
         }
-
-        dd($id);
         //
+    }
+
+
+    public function updateAdmin(){
+        dd('admin');
     }
 
     /**
