@@ -415,5 +415,34 @@ class StaffController extends Controller
     public function destroy(string $id)
     {
         //
+        if (!(JWTAuth::user()->hasRole('admin') or JWTAuth::user()->hasRole('Total User')) ) {
+
+            return response()->json(['message' => 'Unauthorized'], 401);
+            // dd('admin');
+            # code...
+        }
+
+        try {
+            // Validate the string $id
+            if (!is_string($id) || empty($id) || strlen($id) > 255) {
+                throw new ValidationException(validator(['id' => $id], [
+                    'id' => 'required|string|max:255',
+                ]));
+            }
+    
+            $user = User::where('staff_id', $id)->first();
+            if (empty($user)) {
+                # code...
+                return response()->json(['message' => 'No staff found'], 404);
+            }
+
+            $user->delete();
+            return response()->json(['message' => 'Staff deleted successfully'], 200);
+    
+        } catch (ValidationException $th) {
+            // Return a JSON response with validation errors
+            return response()->json(['errors' => $th->errors()], 422);
+        }
+        // dd(123);
     }
 }
