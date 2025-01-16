@@ -56,13 +56,13 @@ class User extends Authenticatable implements JWTSubject
                 'L_name' => $validatedData['L_Name'],
                 // 'email' => $validatedData['email'],
                 'phone' => $validatedData['phone'],
-                'password' => Hash::make($validatedData['password']),
+                // 'password' => Hash::make($validatedData['password']),
                 'designation' => $validatedData['Designation'],
                 'cadre' => $validatedData['cadre'],
             ]);
     }
 
-    
+
 
     public function userDetails()
     {
