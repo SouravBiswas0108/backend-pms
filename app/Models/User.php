@@ -45,18 +45,11 @@ class User extends Authenticatable implements JWTSubject
     public function scopeUpdateUser($query, $id, $validatedData)
     {
         return $query->where('staff_id', $id)
-            ->where('email', $validatedData['email'])
-            ->where('ippis_no', $validatedData['ippis_no'])
             ->update([
-
-                // 'ippis_no' => $validatedData['ippis_no'],
-                'staff_id' => $validatedData['staff_id'],
                 'F_name' => $validatedData['F_Name'],
                 'M_name' => $validatedData['M_Name'],
                 'L_name' => $validatedData['L_Name'],
-                // 'email' => $validatedData['email'],
                 'phone' => $validatedData['phone'],
-                // 'password' => Hash::make($validatedData['password']),
                 'designation' => $validatedData['Designation'],
                 'cadre' => $validatedData['cadre'],
             ]);

@@ -363,9 +363,9 @@ class StaffController extends Controller
         try {
 
             $validatedData =  $request->validate([
-                'staff_id' => 'required|string|max:255',
-                'ippis_no' => 'required|string|max:255',
-                'email' => 'required|email|max:255',
+                // 'staff_id' => 'required|string|max:255',
+                // 'ippis_no' => 'required|string|max:255',
+                // 'email' => 'required|email|max:255',
                 'F_Name' => 'required|string|max:255',
                 'M_Name' => 'nullable|string|max:255',
                 'L_Name' => 'required|string|max:255',
@@ -383,9 +383,6 @@ class StaffController extends Controller
                 "grade_level" => 'required|string|max:255',
             ]);
 
-            if ($id != $validatedData['staff_id']) {
-                return response()->json(['message' => 'Unauthorized'], 401);              
-            }
             $user = User::updateUser($id,$validatedData);
 
             if ($user) {
