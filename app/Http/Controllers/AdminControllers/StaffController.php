@@ -25,7 +25,7 @@ class StaffController extends Controller
         $user = JWTAuth::user();
         if ($user->hasRole('admin') or $user->hasRole('Total User')) {
             # code...
-            $stafflist = User::with('userDetails')->get()->toArray();
+            $stafflist = User::with('userDetails')->where('staff_id','!=','STAFF00001')->get()->toArray();
 
             // dd($stafflist);
 
