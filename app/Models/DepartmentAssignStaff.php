@@ -12,6 +12,7 @@ class DepartmentAssignStaff extends Model
     protected $table = 'department_staff';
     protected $fillable = [
         'department_id',
+        'team_id',
         'org_code',
         'staff_id',
         'staff_name',

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminControllers\AuthController as AdminControllersAuthController;
+use App\Http\Controllers\AdminControllers\Department\DepartmentController;
 use App\Http\Controllers\AdminControllers\StaffController;
 use App\Http\Controllers\Department\UserDepartmentController;
 use App\Http\Controllers\EmployeeSubTaskController;
@@ -67,6 +68,12 @@ Route::middleware('auth:api')->group(function () {
       Route::resource('/', AdminControllersAuthController::class);
 
       Route::resource('staff', StaffController::class);
+
+      Route::resource('department',DepartmentController::class);
+
+      Route::post('/department/{department}/assignstaff',[DepartmentController::class,'assignStaff'])->name('department.assignstaff');
+
+      Route::post('/department/{department}/assignall',[DepartmentController::class,'assignAll'])->name('department.assignall');
     });
   // });
 
