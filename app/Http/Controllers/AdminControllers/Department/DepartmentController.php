@@ -218,11 +218,11 @@ class DepartmentController extends Controller
                 'errors' => $e->errors()
             ], 422);
         }
-
     }
 
     //already assigned staff
-    public function assignedStaff(string $department_id, Request $request){
+    public function assignedStaff(string $department_id, Request $request)
+    {
         // dd($department_id);
         if (!(JWTAuth::user()->hasRole('admin') or JWTAuth::user()->hasRole('Total User'))) {
 
@@ -231,20 +231,31 @@ class DepartmentController extends Controller
             # code...
         }
 
-        $departmentAssignStaff = DepartmentAssignStaff::where('department_id', $department_id)
+        $departmentAssignedStaff = DepartmentAssignStaff::with('user')->where('department_id', $department_id)
             ->where('year', $request->year)
-            ->get()->pluck('staff_id')->unique();
+            ->get()->map(function ($item) {
+                return [
+                    "staff_id" => $item->staff_id,
+                    "name" => $item->user->F_name . ' ' . $item->user->M_name . ' ' . $item->user->L_name,
+                ];
+            })
+            ->unique('staff_id') // Ensures unique staff_id
+            ->values(); // Reindex the collection
+   
+       
+        if ($departmentAssignedStaff->isEmpty()) {
+            # code...
+            return response()->json([
+                "data" => [],
+            ]);
+        }
 
-            // if
-            if ($departmentAssignStaff->isEmpty()) {
-                # code...
-                return response()->json("No staff found for the department " . $department_id, 404);
-            }
-
-        return response()->json($departmentAssignStaff);
+        return response()->json([
+            "data" => $departmentAssignedStaff,
+        ]);
 
 
-        dd($departmentAssignStaff);
+        // dd($departmentAssignStaff);
 
     }
 
@@ -276,8 +287,6 @@ class DepartmentController extends Controller
                 'staff_ids' => 'required|array', // Ensure it's an array
                 'staff_ids.*' => 'required|string|regex:/^STAFF\d{6}$/', // Validate each array element
             ]);
-
-           
         } catch (ValidationException $e) {
             // Return all validation errors
             return response()->json([
@@ -286,6 +295,5 @@ class DepartmentController extends Controller
         }
 
         dd($request->all());
-
     }
 }
