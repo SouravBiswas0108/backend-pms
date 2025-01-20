@@ -18,10 +18,19 @@ class DepartmentController extends Controller
     {
         //
         // $data = Department::where('')
+        if (!(JWTAuth::user()->hasRole('admin') or JWTAuth::user()->hasRole('Total User'))) {
+
+            return response()->json(["you don't have permission to perform this action"], 403);
+            // dd('admin');
+            # code...
+        }
         $data = Department::where('year', $request->year)->get()->map(function ($item) {
             return [
                 'department_id' => $item->department_id,
                 'department_name' => $item->department_name,
+                'year' => $item->year,
+                'description' => $item->description,
+                'organization' => $item->organization,
             ];
         });
 
@@ -227,6 +236,13 @@ class DepartmentController extends Controller
             ->get()->pluck('staff_id')->unique();
 
             // if
+            if ($departmentAssignStaff->isEmpty()) {
+                # code...
+                return response()->json("No staff found for the department " . $department_id, 404);
+            }
+
+        return response()->json($departmentAssignStaff);
+
 
         dd($departmentAssignStaff);
 
