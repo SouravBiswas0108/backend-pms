@@ -163,7 +163,7 @@ class DepartmentController extends Controller
                     }
                 }],
                 'staff_ids' => 'required|array', // Ensure it's an array
-                'staff_ids.*' => 'required|string|regex:/^STAFF\d{6}$/', // Validate each array element
+                'staff_ids.*' => 'required|string', // Validate each array element
             ]);
 
             // dd($validatedData);
