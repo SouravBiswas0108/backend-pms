@@ -18,7 +18,12 @@ class DepartmentController extends Controller
     {
         //
         // $data = Department::where('')
-        $data = Department::where('year', $request->year)->get()->pluck('department_name', 'department_id');
+        $data = Department::where('year', $request->year)->get()->map(function ($item) {
+            return [
+                'department_id' => $item->department_id,
+                'department_name' => $item->department_name,
+            ];
+        });
 
         if ($data->isEmpty()) {
             return response()->json("No department found for the year " . $request->year, 404);
@@ -207,6 +212,26 @@ class DepartmentController extends Controller
 
     }
 
+    //already assigned staff
+    public function assignedStaff(string $department_id, Request $request){
+        // dd($department_id);
+        if (!(JWTAuth::user()->hasRole('admin') or JWTAuth::user()->hasRole('Total User'))) {
+
+            return response()->json(["you don't have permission to perform this action"], 403);
+            // dd('admin');
+            # code...
+        }
+
+        $departmentAssignStaff = DepartmentAssignStaff::where('department_id', $department_id)
+            ->where('year', $request->year)
+            ->get()->pluck('staff_id')->unique();
+
+            // if
+
+        dd($departmentAssignStaff);
+
+    }
+
     public function assignAll(string $department_id, Request $request)
     {
         dd(123);
@@ -231,6 +256,7 @@ class DepartmentController extends Controller
                         return $fail('The year must match the department\'s year.');
                     }
                 }],
+                'team_id' => 'required|string',
                 'staff_ids' => 'required|array', // Ensure it's an array
                 'staff_ids.*' => 'required|string|regex:/^STAFF\d{6}$/', // Validate each array element
             ]);

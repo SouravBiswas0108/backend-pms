@@ -72,7 +72,10 @@ Route::middleware('auth:api')->group(function () {
       Route::resource('department',DepartmentController::class);
 
       Route::post('/department/{department}/assignstaff',[DepartmentController::class,'assignStaff'])->name('department.assignstaff');
+        
+      Route::get('/department/{department}/assignedStaff',[DepartmentController::class,'assignedStaff'])->name('department.assignedStaff');
 
+       
       Route::post('/department/{department}/assignall',[DepartmentController::class,'assignAll'])->name('department.assignall');
     });
   // });
