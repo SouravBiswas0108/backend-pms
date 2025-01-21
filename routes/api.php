@@ -63,21 +63,23 @@ Route::middleware('auth:api')->group(function () {
   });
 
   // Route::middleware('role:admin')->group(function () {
-    Route::prefix('admin')->name('admin')->group(function () {
+  Route::prefix('admin')->name('admin')->group(function () {
 
-      Route::resource('/', AdminControllersAuthController::class);
+    Route::resource('/', AdminControllersAuthController::class);
 
-      Route::resource('staff', StaffController::class);
+    Route::resource('staff', StaffController::class);
 
-      Route::resource('department',DepartmentController::class);
+    Route::resource('department', DepartmentController::class);
 
-      Route::post('/department/{department}/assignstaff',[DepartmentController::class,'assignStaff'])->name('department.assignstaff');
-        
-      Route::get('/department/{department}/assignedStaff',[DepartmentController::class,'assignedStaff'])->name('department.assignedStaff');
+    Route::post('/department/{department}/assignstaff', [DepartmentController::class, 'assignStaff'])->name('department.assignstaff');
 
-       
-      Route::post('/department/{department}/assignall',[DepartmentController::class,'assignAll'])->name('department.assignall');
-    });
+    Route::get('/department/{department}/assignedStaff', [DepartmentController::class, 'assignedStaff'])->name('department.assignedStaff');
+
+    Route::post('/department/{department}/assignall', [DepartmentController::class, 'assignAll'])->name('department.assignall');
+
+    Route::get('/department/{department}/alreadyassignedlist', [DepartmentController::class, 'alreadyAssignedList'])->name('department.alreadyAssignedList');
+
+  });
   // });
 
 

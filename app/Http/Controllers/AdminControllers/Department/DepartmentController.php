@@ -263,7 +263,7 @@ class DepartmentController extends Controller
     {
         // dd(123);
         if (!(JWTAuth::user()->hasRole('admin') or JWTAuth::user()->hasRole('Total User'))) {
-            
+
             return response()->json(["you don't have permission to perform this action"], 403);
         }
 
@@ -405,7 +405,7 @@ class DepartmentController extends Controller
                 ], 200);
             }
 
-            dd('testing');
+            // dd('testing');
 
             // dd($supervisorCheck);
         } catch (ValidationException $e) {
@@ -415,6 +415,57 @@ class DepartmentController extends Controller
             ], 422);
         }
 
-        dd($request->all());
+        // dd($request->all());
+    }
+
+    public function alreadyAssignedList(string $department_id, Request $request)
+    {
+        if (!(JWTAuth::user()->hasRole('admin') or JWTAuth::user()->hasRole('Total User'))) {
+
+            return response()->json(["you don't have permission to perform this action"], 403);
+        }
+
+        $departmentAssignedStaff = DepartmentAssignStaff::with('user')
+            ->where('department_id', $department_id)
+            ->where('year', $request->year)
+            ->where('assign_role_name', 'Staff')
+            ->whereNotNull('team_id')
+            ->get();
+
+        if ($departmentAssignedStaff->isEmpty()) {
+            $departmentAssignedStaff = [];
+        } else {
+            $departmentAssignedStaff = $departmentAssignedStaff->map(function ($item) {
+                return [
+                    "staff_id" => $item->staff_id,
+                    "name" => $item->user->F_name . ' ' . $item->user->M_name . ' ' . $item->user->L_name,
+                ];
+            });
+        }
+
+        $departmentAssignedSupervisor = DepartmentAssignStaff::with('user')
+            ->where('department_id', $department_id)
+            ->where('year', $request->year)
+            ->where('assign_role_name', 'Supervisor')
+            ->whereNotNull('team_id')
+            ->get();
+
+        if ($departmentAssignedSupervisor->isEmpty()) {
+            $departmentAssignedSupervisor = [];
+        } else {
+            $departmentAssignedSupervisor = $departmentAssignedSupervisor->map(function ($item) {
+                return [
+                    "staff_id" => $item->staff_id,
+                    "name" => $item->user->F_name . ' ' . $item->user->M_name . ' ' . $item->user->L_name,
+                ];
+            });
+        }
+
+        return response()->json([
+            "staff" => $departmentAssignedStaff,
+            "supervisor" => $departmentAssignedSupervisor,
+        ]);
+
+        // dd($departmentAssignedStaff, $departmentAssignedSupervisor);
     }
 }
