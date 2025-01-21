@@ -241,8 +241,8 @@ class DepartmentController extends Controller
             })
             ->unique('staff_id') // Ensures unique staff_id
             ->values(); // Reindex the collection
-   
-       
+
+
         if ($departmentAssignedStaff->isEmpty()) {
             # code...
             return response()->json([
@@ -261,12 +261,10 @@ class DepartmentController extends Controller
 
     public function assignAll(string $department_id, Request $request)
     {
-        dd(123);
+        // dd(123);
         if (!(JWTAuth::user()->hasRole('admin') or JWTAuth::user()->hasRole('Total User'))) {
-
+            
             return response()->json(["you don't have permission to perform this action"], 403);
-            // dd('admin');
-            # code...
         }
 
         try {
@@ -283,10 +281,133 @@ class DepartmentController extends Controller
                         return $fail('The year must match the department\'s year.');
                     }
                 }],
-                'team_id' => 'required|string',
-                'staff_ids' => 'required|array', // Ensure it's an array
-                'staff_ids.*' => 'required|string|regex:/^STAFF\d{6}$/', // Validate each array element
+                'team_id' => 'required|string|unique:department_staff,team_id',
+                'assign_staff_ids' => 'required|array',
+                'supervisor_id' => 'required|string',
+                'officer_id' => 'required|string',
             ]);
+
+            $supervisorCheck = DepartmentAssignStaff::where('department_id', $department_id)
+                ->where('year', $validatedData['year'])
+                ->where('staff_id', $validatedData['supervisor_id'])
+                ->where('assign_role_name', 'Supervisor')
+                ->exists();
+
+            //checking if supervisor is already assigned in this department
+            if ($supervisorCheck) {
+                return response()->json([
+                    'message' => 'Supervisor already assigned to the department for this year.',
+                    'supervisor_id' => $validatedData['supervisor_id'],
+                ], 400);
+            }
+
+            $officerCheck = DepartmentAssignStaff::where('department_id', $department_id)
+                ->where('year', $validatedData['year'])
+                ->where('staff_id', $validatedData['officer_id'])
+                ->where('assign_role_name', 'Officer')
+                ->exists();
+
+            if ($officerCheck) {
+                $assignSupervisor = DepartmentAssignStaff::create([
+                    "department_id" => $department_id,
+                    "team_id" => $validatedData['team_id'],
+                    "staff_id" => $validatedData['supervisor_id'],
+                    "assign_role_name" => "Supervisor",
+                    "assign_role_id" => 2,
+                    "year" => $validatedData['year'],
+                ]);
+
+                $updates = [];
+
+                foreach ($validatedData['assign_staff_ids'] as $staff_id) {
+                    $updates[] = [
+                        'staff_id' => $staff_id,
+                        'team_id' => $validatedData['team_id'],
+                        'supervisor_id' => $validatedData['supervisor_id'],
+                        'officer_id' => $validatedData['officer_id'],
+                    ];
+                }
+
+                $assignStaff = DepartmentAssignStaff::where('department_id', $department_id)
+                    ->where('year', $validatedData['year'])
+                    ->whereIn('staff_id', $validatedData['assign_staff_ids'])
+                    ->update([
+                        'team_id' => $validatedData['team_id'],
+                        'supervisor_id' => $validatedData['supervisor_id'],
+                        'officer_id' => $validatedData['officer_id'],
+                    ]);
+
+                if (!$assignStaff  or !$assignSupervisor) {
+                    # code...
+                    return response()->json([
+                        'message' => 'Failed to assign staff to the department.',
+                    ], 500);
+                }
+
+                return response()->json([
+                    'message' => 'Staff successfully assigned to the department.',
+                    'assigned_staff' => $validatedData['assign_staff_ids'],
+                    'department_id' => $department_id,
+                    'year' => $validatedData['year'],
+                ], 200);
+
+                // dd('officer already assigned');
+            } else {
+                $assignOfficer = DepartmentAssignStaff::create([
+                    "department_id" => $department_id,
+                    "staff_id" => $validatedData['officer_id'],
+                    "assign_role_name" => "Officer",
+                    "assign_role_id" => 3,
+                    "year" => $validatedData['year'],
+                ]);
+
+                $assignSupervisor = DepartmentAssignStaff::create([
+                    "department_id" => $department_id,
+                    "team_id" => $validatedData['team_id'],
+                    "staff_id" => $validatedData['supervisor_id'],
+                    "assign_role_name" => "Supervisor",
+                    "assign_role_id" => 2,
+                    "year" => $validatedData['year'],
+                ]);
+
+                $updates = [];
+
+                foreach ($validatedData['assign_staff_ids'] as $staff_id) {
+                    $updates[] = [
+                        'staff_id' => $staff_id,
+                        'team_id' => $validatedData['team_id'],
+                        'supervisor_id' => $validatedData['supervisor_id'],
+                        'officer_id' => $validatedData['officer_id'],
+                    ];
+                }
+
+                $assignStaff = DepartmentAssignStaff::where('department_id', $department_id)
+                    ->where('year', $validatedData['year'])
+                    ->whereIn('staff_id', $validatedData['assign_staff_ids'])
+                    ->update([
+                        'team_id' => $validatedData['team_id'],
+                        'supervisor_id' => $validatedData['supervisor_id'],
+                        'officer_id' => $validatedData['officer_id'],
+                    ]);
+
+                if (!$assignStaff or !$assignOfficer or !$assignSupervisor) {
+                    # code...
+                    return response()->json([
+                        'message' => 'Failed to assign staff to the department.',
+                    ], 500);
+                }
+
+                return response()->json([
+                    'message' => 'Staff successfully assigned to the department.',
+                    'assigned_staff' => $validatedData['assign_staff_ids'],
+                    'department_id' => $department_id,
+                    'year' => $validatedData['year'],
+                ], 200);
+            }
+
+            dd('testing');
+
+            // dd($supervisorCheck);
         } catch (ValidationException $e) {
             // Return all validation errors
             return response()->json([
