@@ -31,4 +31,8 @@ class DepartmentAssignStaff extends Model
         return $this->belongsTo(User::class, 'staff_id', 'staff_id');
     }
 
+    public function supervisor(){
+        return $this->belongsTo(User::class, 'supervisor_id','staff_id');
+    }
+
 }

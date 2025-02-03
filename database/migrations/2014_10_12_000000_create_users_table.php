@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('staff_id', 20)->unique();
             $table->string('ippis_no', 200);
-            $table->tinyInteger('active_status')->default(0);
+            $table->tinyInteger('active_status')->default(0);// active status 0 means active 1 means inactive
             $table->integer('status')->default(1);
             $table->string('F_name');
             $table->string('M_name', 255)->nullable();

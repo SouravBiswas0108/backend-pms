@@ -330,6 +330,7 @@ class DepartmentController extends Controller
 
                 $assignStaff = DepartmentAssignStaff::where('department_id', $department_id)
                     ->where('year', $validatedData['year'])
+                    ->where('assign_role_name', 'Staff')
                     ->whereIn('staff_id', $validatedData['assign_staff_ids'])
                     ->update([
                         'team_id' => $validatedData['team_id'],
@@ -383,6 +384,7 @@ class DepartmentController extends Controller
 
                 $assignStaff = DepartmentAssignStaff::where('department_id', $department_id)
                     ->where('year', $validatedData['year'])
+                    ->where('assign_role_name', 'Staff')
                     ->whereIn('staff_id', $validatedData['assign_staff_ids'])
                     ->update([
                         'team_id' => $validatedData['team_id'],
@@ -467,5 +469,69 @@ class DepartmentController extends Controller
         ]);
 
         // dd($departmentAssignedStaff, $departmentAssignedSupervisor);
+    }
+
+
+    // team get all 
+
+    public function teamGetAll(string $department_id, Request $request)
+    {
+        // dd(123);
+
+        if (!(JWTAuth::user()->hasRole('admin') or JWTAuth::user()->hasRole('Total User'))) {
+
+            return response()->json(["you don't have permission to perform this action"], 403);
+        }
+
+        $TeamGetAll = DepartmentAssignStaff::where('department_id', $department_id)
+            ->where('year', $request->year)
+            ->whereNotNull('team_id')
+            ->get('team_id')->unique('team_id')->toArray();
+
+        if ($TeamGetAll) {
+
+            $staffDetails = DepartmentAssignStaff::with('user', 'supervisor')
+                ->where('assign_role_name', "Staff") // Eager load the related user details
+                ->whereIn('team_id', $TeamGetAll)
+                ->get();
+
+            return $staffDetails;
+            // Map the data separately
+            $staffDetails = $staffDetails->map(function ($groupedStaff) {
+                return $groupedStaff->map(function ($staff) {
+                    return [
+                        'user_name' => $staff->user->F_name . ' ' . $staff->user->M_name . ' ' . $staff->user->L_name,
+                        'supervisor_name' => $staff->supervisor->F_name ?? null, // Extract the supervisor name
+                    ];
+                });
+            });
+
+
+            // ->map(function ($group, $teamId ) {
+            //     return [
+            //         'team_name' => $teamId,
+            //         'staff_details' => $group->map(function ($item) {
+            //             return [
+            //                 'staff_id' => $item->staff_id,
+            //                 'staff_name' => $item->user->F_name . ' ' . $item->user->M_name . ' ' . $item->user->L_name, // Get staff name from the user relationship
+            //             ];
+            //         })->toArray(),
+            //         'supervisor_details' => $group->map(function ($item) {
+            //             return [
+            //                 'staff_id' => $item->supervisor_id,
+            //                 // 'staff_name' => $item->supervisor->F_name . ' ' . $item->user->M_name . ' ' . $item->user->L_name, // Get staff name from the user relationship
+            //             ];
+            //         })->toArray(),
+            //     ];
+            // })
+            // ->values(); // Convert to array structure
+
+
+
+            return response()->json([
+                "data" => $staffDetails,
+            ]);
+        }
+        // dd($staffDetails);
     }
 }

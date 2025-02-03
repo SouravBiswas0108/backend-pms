@@ -31,4 +31,11 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+
+// for ministries wise api hit 
+    'ministry_api' =>[
+         'base_url' => env('MINISTRY_API_BASE_URL'),
+         'token' => env('MINISTRY_API_TOKEN'),
+    ],
+
 ];

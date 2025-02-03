@@ -4,8 +4,10 @@ namespace App\Http\Controllers\AdminControllers;
 
 use App\Events\TestNotification;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Ministry\MinistriesController;
 use App\Models\User;
 use App\Models\UserDetail;
+use GuzzleHttp\Client;
 use Illuminate\Auth\Events\Validated;
 use Illuminate\Http\Request;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
@@ -25,7 +27,7 @@ class StaffController extends Controller
         $user = JWTAuth::user();
         if ($user->hasRole('admin') or $user->hasRole('Total User')) {
             # code...
-            $stafflist = User::with('userDetails')->where('staff_id','!=','STAFF00001')->get()->toArray();
+            $stafflist = User::with('userDetails')->where('staff_id', '!=', 'STAFF00001')->get()->toArray();
 
             // dd($stafflist);
 
@@ -37,7 +39,7 @@ class StaffController extends Controller
                     "name" => $item['F_name'] . " " . $item['M_name'] . " " . $item['L_name'],
                     "email" => $item['email'],
                     "is_active" => $item['user_details']['is_active'],
-                    "type" => $item['is_admin']? 'admin' : 'user',
+                    "type" => $item['is_admin'] ? 'admin' : 'user',
                     "grade_level" => $item['user_details']['grade_level'],
                 ];
             });
@@ -80,85 +82,102 @@ class StaffController extends Controller
                 return $this->createAdmin($request);
                 // dd('admin');
             }
-        
-        try {
 
-            $validatedData =  $request->validate([
-                'staff_id' => 'required|string|unique:users,staff_id|max:255',
-                'ippis_no' => 'required|string|unique:users,ippis_no|max:255',
-                'email' => 'required|email|unique:users,email|max:255',
-                'F_Name' => 'required|string|max:255',
-                'M_Name' => 'nullable|string|max:255',
-                'L_Name' => 'required|string|max:255',
-                'phone' => 'required|string|max:15',
-                'password' => 'required|string|min:4',
-                'job_Title' => 'required|string|max:255',
-                'Designation' => 'required|string|max:255',
-                'cadre' => 'required|string|max:255',
-                'date_of_current_posting' => 'required|date_format:d/m/Y',
-                'date_of_MDA_posting' => 'required|date_format:d/m/Y',
-                'date_of_last_promotion' => 'required|date_format:d/m/Y',
-                'gender' => 'required|in:male,female,other',
-                'organization' => 'required|string|max:255',
-                'role' => 'required|string|max:255',
-                'recovery_email' => 'required|email|max:255',
-                "grade_level" => 'required|string|max:255',
-            ]);
+            try {
 
-            $user =  User::create([
-                'ippis_no' => $validatedData['ippis_no'],
-                'staff_id' => $validatedData['staff_id'],
-                'F_name' => $validatedData['F_Name'],
-                'M_name' => $validatedData['M_Name'],
-                'L_name' => $validatedData['L_Name'],
-                'email' => $validatedData['email'],
-                'phone' => $validatedData['phone'],
-                'password' => hash::make($validatedData['password']),
-                'designation' => $validatedData['Designation'],
-                'cadre' => $validatedData['cadre']
-                // 'organization' => $validatedData['organization'],
-            ]);
+                $validatedData =  $request->validate([
+                    'staff_id' => 'required|string|unique:users,staff_id|max:255',
+                    'ippis_no' => 'required|string|unique:users,ippis_no|max:255',
+                    'email' => 'required|email|unique:users,email|max:255',
+                    'F_Name' => 'required|string|max:255',
+                    'M_Name' => 'nullable|string|max:255',
+                    'L_Name' => 'required|string|max:255',
+                    'phone' => 'required|string|max:15',
+                    'password' => 'required|string|min:4',
+                    'job_Title' => 'required|string|max:255',
+                    'Designation' => 'required|string|max:255',
+                    'cadre' => 'required|string|max:255',
+                    'date_of_current_posting' => 'required|date_format:d/m/Y',
+                    'date_of_MDA_posting' => 'required|date_format:d/m/Y',
+                    'date_of_last_promotion' => 'required|date_format:d/m/Y',
+                    'gender' => 'required|in:male,female,other',
+                    'organization' => 'required|string|max:255',
+                    'role' => 'required|string|max:255',
+                    'recovery_email' => 'required|email|max:255',
+                    "grade_level" => 'required|string|max:255',
+                    "ministry" => 'required|string|max:255',
+                ]);
 
-            // dd(auth::user()->id);
+                ////validate wheather the user exist in centralized database or not 
 
-            $userDetails =  UserDetail::create([
-                'staff_id' => $validatedData['staff_id'],
-                'gender' => $validatedData['gender'],
-                'designation' => $validatedData['Designation'],
-                'cadre' => $validatedData['cadre'],
-                // 'org_code' => $validatedData['organization'],
-                // 'org_name' => $validatedData['organization'],
-                'date_of_current_posting' => $request->input('date_of_current_posting'),
-                'date_of_MDA_posting' => $request->input('date_of_MDA_posting'),
-                'date_of_last_promotion' => $request->input('date_of_last_promotion'),
-                'job_title' => $validatedData['job_Title'],
-                'grade_level' => $validatedData['grade_level'],
-                // 'org_name' => $validatedData['organization'],
-                'recovery_email' => $validatedData['recovery_email'],
-                'created_by' => JWTAuth::user()->id,
-                'type' => $validatedData['role'],
-            ]);
+                $ministriesController = new MinistriesController();
+                $userExistsResponse = $ministriesController->validateUser($validatedData);
+                if ($userExistsResponse) {
+                    return response()->json([
+                        "message"=>"unable to create user"
+                    ],422); // Return user exists error response
+                }
 
-            //pusher notification
-            event(new TestNotification(['message' => 'New staff created']));
+                $userCreateResponse = $ministriesController->createUser($validatedData);
+                if (!$userCreateResponse) {
 
-            return response()->json(['message' => 'Staff created successfully'], 201);
-            // dd($request->all());
-        } catch (ValidationException $e) {
-            // Return all validation errors
-            return response()->json([
-                'errors' => $e->errors()
-            ], 422);
+                   return response()->json(["message"=>"unable to create user in ministry"]);
+                    # code...
+                }
+
+                // dd(123);
+                $user =  User::create([
+                    'ippis_no' => $validatedData['ippis_no'],
+                    'staff_id' => $validatedData['staff_id'],
+                    'F_name' => $validatedData['F_Name'],
+                    'M_name' => $validatedData['M_Name'],
+                    'L_name' => $validatedData['L_Name'],
+                    'email' => $validatedData['email'],
+                    'phone' => $validatedData['phone'],
+                    'password' => hash::make($validatedData['password']),
+                    'designation' => $validatedData['Designation'],
+                    'cadre' => $validatedData['cadre']
+                    // 'organization' => $validatedData['organization'],
+                ]);
+
+                $userDetails =  UserDetail::create([
+                    'staff_id' => $validatedData['staff_id'],
+                    'gender' => $validatedData['gender'],
+                    'designation' => $validatedData['Designation'],
+                    'cadre' => $validatedData['cadre'],
+                    // 'org_code' => $validatedData['organization'],
+                    // 'org_name' => $validatedData['organization'],
+                    'date_of_current_posting' => $request->input('date_of_current_posting'),
+                    'date_of_MDA_posting' => $request->input('date_of_MDA_posting'),
+                    'date_of_last_promotion' => $request->input('date_of_last_promotion'),
+                    'job_title' => $validatedData['job_Title'],
+                    'grade_level' => $validatedData['grade_level'],
+                    // 'org_name' => $validatedData['organization'],
+                    'recovery_email' => $validatedData['recovery_email'],
+                    'created_by' => JWTAuth::user()->id,
+                    'type' => $validatedData['role'],
+                ]);
+
+                //pusher notification
+                event(new TestNotification(['message' => 'New staff created']));
+
+                return response()->json(['message' => 'Staff created successfully'], 201);
+                // dd($request->all());
+            } catch (ValidationException $e) {
+                // Return all validation errors
+                return response()->json([
+                    'errors' => $e->errors()
+                ], 422);
+            }
+        } else {
+            return response()->json(['message' => 'Unauthorized'], 401);
         }
-    } 
-    else{
-        return response()->json(['message' => 'Unauthorized'], 401);
-    }
 
         // dd($request->all());
     }
 
-    public function createAdmin(Request $request){
+    public function createAdmin(Request $request)
+    {
 
         // dd($request->all());
 
@@ -197,8 +216,6 @@ class StaffController extends Controller
             ]);
 
             // dd($validatedData);
-
-
 
             $user =  User::create([
                 'ippis_no' => $validatedData['ippis_no'],
@@ -251,10 +268,10 @@ class StaffController extends Controller
             ];
 
             // Assign roles based on permissions
-           foreach ($permissionRoles as $permissionKey => $roleName) {
-           if (!empty($validatedData['permission'][$permissionKey]) && $validatedData['permission'][$permissionKey] == 1) {
-                $userForAssignRole->assignRole($roleName);
-              }
+            foreach ($permissionRoles as $permissionKey => $roleName) {
+                if (!empty($validatedData['permission'][$permissionKey]) && $validatedData['permission'][$permissionKey] == 1) {
+                    $userForAssignRole->assignRole($roleName);
+                }
             }
 
             //pusher notification
@@ -268,7 +285,6 @@ class StaffController extends Controller
                 'errors' => $e->errors()
             ], 422);
         }
-       
     }
 
     /**
@@ -277,7 +293,7 @@ class StaffController extends Controller
     public function show(string $id)
     {
         //
-        if (!(JWTAuth::user()->hasRole('admin') or JWTAuth::user()->hasRole('Total User')) ) {
+        if (!(JWTAuth::user()->hasRole('admin') or JWTAuth::user()->hasRole('Total User'))) {
 
             return response()->json(['message' => 'Unauthorized'], 401);
             // dd('admin');
@@ -291,7 +307,7 @@ class StaffController extends Controller
                     'id' => 'required|string|max:255',
                 ]));
             }
-    
+
             $data = User::with('userDetails')->where('staff_id', $id)->get()->toArray();
 
             if (empty($data)) {
@@ -299,7 +315,7 @@ class StaffController extends Controller
                 return response()->json(['message' => 'No staff found'], 404);
             }
 
-            $result = collect($data)->map(function($item){
+            $result = collect($data)->map(function ($item) {
                 return [
                     "staff_id" => $item['staff_id'],
                     "ippis_no" => $item['ippis_no'],
@@ -324,8 +340,7 @@ class StaffController extends Controller
             });
             // dd($result);
             // Perform further actions using the validated id
-            return response()->json([ "data" => $result], 200);
-    
+            return response()->json(["data" => $result], 200);
         } catch (ValidationException $th) {
             // Return a JSON response with validation errors
             return response()->json(['errors' => $th->errors()], 422);
@@ -346,7 +361,7 @@ class StaffController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        if (!(JWTAuth::user()->hasRole('admin') or JWTAuth::user()->hasRole('Total User')) ) {
+        if (!(JWTAuth::user()->hasRole('admin') or JWTAuth::user()->hasRole('Total User'))) {
 
             return response()->json(['message' => 'Unauthorized'], 401);
             // dd('admin');
@@ -383,7 +398,16 @@ class StaffController extends Controller
                 "grade_level" => 'required|string|max:255',
             ]);
 
-            $user = User::updateUser($id,$validatedData);
+            $ministriesController = new MinistriesController();
+                $userExistsResponse = $ministriesController->updateUser($validatedData,$id);
+                if (!$userExistsResponse) {
+                    return response()->json([
+                        "message"=>"unable to update user"
+                    ],422); // Return user exists error response
+                }
+
+
+            $user = User::updateUser($id, $validatedData);
 
             if ($user) {
                 $userDetails = UserDetail::updateUserDetails($id, $validatedData, $request);
@@ -391,7 +415,6 @@ class StaffController extends Controller
             } else {
                 return response()->json(['message' => 'User update failed.'], 400);
             }
-
         } catch (ValidationException $e) {
             // Return all validation errors
             return response()->json([
@@ -402,7 +425,8 @@ class StaffController extends Controller
     }
 
 
-    public function updateAdmin(){
+    public function updateAdmin()
+    {
         dd('admin');
     }
 
@@ -412,7 +436,7 @@ class StaffController extends Controller
     public function destroy(string $id)
     {
         //
-        if (!(JWTAuth::user()->hasRole('admin') or JWTAuth::user()->hasRole('Total User')) ) {
+        if (!(JWTAuth::user()->hasRole('admin') or JWTAuth::user()->hasRole('Total User'))) {
 
             return response()->json(['message' => 'Unauthorized'], 401);
             // dd('admin');
@@ -426,7 +450,7 @@ class StaffController extends Controller
                     'id' => 'required|string|max:255',
                 ]));
             }
-    
+
             $user = User::where('staff_id', $id)->first();
             if (empty($user)) {
                 # code...
@@ -435,11 +459,40 @@ class StaffController extends Controller
 
             $user->delete();
             return response()->json(['message' => 'Staff deleted successfully'], 200);
-    
         } catch (ValidationException $th) {
             // Return a JSON response with validation errors
             return response()->json(['errors' => $th->errors()], 422);
         }
         // dd(123);
+    }
+
+
+    public function getData()
+    {
+
+        // Instantiate the Guzzle HTTP client
+        $client = new Client();
+
+        // Retrieve the base URL and token from the configuration
+        $baseUrl = config('services.ministry_api.base_url');
+        $token = config('services.ministry_api.token');
+
+        try {
+            // Make the GET request with the token in the headers
+            $response = $client->request('GET', $baseUrl . '/guzzle', [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $token,
+                    'Accept' => 'application/json',
+                ],
+            ]);
+
+            // Parse the response body as JSON
+            $data = json_decode($response->getBody(), true);
+
+            return response()->json($data);
+        } catch (\Exception $e) {
+            // Handle errors (e.g., 401, 500, etc.)
+            return response()->json(['error' => $e->getMessage()], $e->getCode() ?: 500);
+        }
     }
 }

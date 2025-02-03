@@ -79,6 +79,7 @@ Route::middleware('auth:api')->group(function () {
 
     Route::get('/department/{department}/alreadyassignedlist', [DepartmentController::class, 'alreadyAssignedList'])->name('department.alreadyAssignedList');
 
+    Route::get('/department/{department}/team/getall', [DepartmentController::class, 'teamGetAll'])->name('department.teamGetAll');
   });
   // });
 
@@ -90,3 +91,5 @@ Route::middleware('auth:api')->group(function () {
 // Route::get('/test', function () {
 //     dd(123);
 // });
+
+Route::get('/guzzle',[StaffController::class,'getData']);
