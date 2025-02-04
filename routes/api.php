@@ -91,11 +91,10 @@ Route::middleware('auth:api')->group(function () {
   Route::prefix('user')->name('user')->group(function () {
     Route::post('release', [UserTransferController::class, 'release_user'])->name('release_user');
   });
-
 });
 
 // Route::get('/test', function () {
 //     dd(123);
 // });
 
-Route::get('/guzzle',[StaffController::class,'getData']);
+Route::get('/guzzle', [StaffController::class, 'getData']);
