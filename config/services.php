@@ -36,6 +36,7 @@ return [
     'ministry_api' =>[
          'base_url' => env('MINISTRY_API_BASE_URL'),
          'token' => env('MINISTRY_API_TOKEN'),
+        'ministry_id' => env('MINISTRY_ID'),
     ],
 
 ];

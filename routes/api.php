@@ -13,6 +13,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Competencies\StaffCompetenciesController;
 use App\Http\Controllers\Competencies\SupervisorCompetenciesController;
 use App\Http\Controllers\Department\SupervisorDepartmentController;
+use App\Http\Controllers\Ministry\UserTransferController;
 use App\Http\Controllers\Planning\PlanningController;
 use App\Http\Controllers\Planning\SupervisorPlanningController;
 use App\Models\EmployeeSubTask;
@@ -86,6 +87,11 @@ Route::middleware('auth:api')->group(function () {
 
   // Logout route
   Route::post('/logout', [AuthController::class, 'logout']);
+
+  Route::prefix('user')->name('user')->group(function () {
+    Route::post('release', [UserTransferController::class, 'release_user'])->name('release_user');
+  });
+
 });
 
 // Route::get('/test', function () {
