@@ -98,3 +98,7 @@ Route::middleware('auth:api')->group(function () {
 // });
 
 Route::get('/guzzle', [StaffController::class, 'getData']);
+
+Route::get('/test', function () {
+  return transferCheck('STAFF0000001');
+});
